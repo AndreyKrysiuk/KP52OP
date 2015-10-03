@@ -6,7 +6,8 @@ int main()
 {
 int h = 2;
 int n = 15;
-int code=692;
+int code;
+scanf("%d", &code);
 float price;
 if (code>=10&&code<=999){
 switch (code){
