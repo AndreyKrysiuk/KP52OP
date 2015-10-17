@@ -51,11 +51,24 @@ double long2double(long long n){
                 result = -result;
                 }
         }
+    if ((E == 0)&& (F == 0))
+        { if(sign == 0){
+        result = +0;
+        } else {
+        result == -0;}
+
+    }
 
 	if ((E == 2047) && (F!= 0) && (binary[0] == '0'))
         {
         return NAN;
         }
+    if ((E == 2047)&&(F==0)){
+        if(sign == 0){
+            result = +INFINITY;
+        } else {
+        result = -INFINITY;}
+    }
 
 	return result;
 }
