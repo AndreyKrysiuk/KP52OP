@@ -8,7 +8,6 @@ double long2double(long long n){
 	double result = 0;
 	char binary[64] = "";
 	long long n1;
-	sign = binary[0];
 	for (charn = 63; charn >= 0; charn--)
     {
 		n1 = n;
@@ -22,6 +21,7 @@ double long2double(long long n){
             }
 		n = n >> 1;
 	}
+	sign = binary[0];
 	for (charn = 12, exp = -1; charn <= 63; charn++, exp--)
 	{
 		if (binary[charn] == '1')
