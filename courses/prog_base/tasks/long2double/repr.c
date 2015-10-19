@@ -39,7 +39,7 @@ double long2double(long long n){
 	if ((E == 0) && (F != 0))
         {
 		result = (1+F)*pow(2, -1022);
-            if(sign == -1)
+            if(sign == 1)
             {
                 result = -result;
             }
@@ -47,7 +47,7 @@ double long2double(long long n){
 
 	else {
 		result = (1+F)*pow(2, E - 1023);
-            if(sign == -1)
+            if(sign == 1)
                 {
                 result = -result;
                 }
@@ -56,7 +56,7 @@ double long2double(long long n){
         { if(sign == 0){
         result = +0;
         } else {
-        result == -0;}
+        result = -0;}
 
     }
 
