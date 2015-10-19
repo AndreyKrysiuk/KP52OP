@@ -8,6 +8,7 @@ double long2double(long long n){
 	double result = 0;
 	char binary[64] = "";
 	long long n1;
+	sign = binary[0];
 	for (charn = 63; charn >= 0; charn--)
     {
 		n1 = n;
