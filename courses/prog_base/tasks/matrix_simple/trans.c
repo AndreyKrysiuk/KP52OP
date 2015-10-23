@@ -1,6 +1,5 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include<math.h>
 
 void fillRand(int mat[4][4])
 {
