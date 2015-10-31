@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1446286615 source:c:\users\Андрей\documents\_repos\kp52op\courses\prog_base\kr\task6\function.c
+	<stdio.h>
+	<stdlib.h>
+
+1446286645 source:c:\users\Андрей\documents\_repos\kp52op\courses\prog_base\kr\task6\main.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+
