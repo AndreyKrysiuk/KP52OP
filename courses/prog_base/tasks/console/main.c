@@ -60,10 +60,10 @@ int main()
                 }
             }
         if(pos.Y==24){
-                if(pos.X<50){
+                if(pos.X<52){
                 fmt=getColour(pos.X%3);
                 } else {
-                    switch(pos.X%3){
+                    switch((pos.X+2)%3){
                 case 0:
                 fmt = BACKGROUND_RED | BACKGROUND_INTENSITY;
                 break;
@@ -89,10 +89,10 @@ int main()
                 }
             }
         if(pos.Y==0){
-                if(pos.X<30){
+                if(pos.X<32){
                 fmt=getColour(pos.X%3);
                 } else {
-                switch(pos.X%3){
+                switch((pos.X+2)%3){
                 case 0:
                 fmt = BACKGROUND_RED | BACKGROUND_INTENSITY;
                 break;
@@ -121,10 +121,10 @@ int main()
                 break;
             if((pos.X==79)){
                     if(pos.X<78){
-                fmt=getColour(pos.X%3);
+                fmt=getColour((pos.X+2)%3);
                 SetConsoleTextAttribute(hConsole, fmt);
             } else {
-                switch(pos.Y%3){
+                switch((pos.Y-2)%3){
                 case 0:
                 fmt = BACKGROUND_RED | BACKGROUND_GREEN |BACKGROUND_INTENSITY;
                 break;
@@ -151,8 +151,6 @@ int main()
             }
 
         }
-        fmt = BACKGROUND_INTENSITY;
-        SetConsoleTextAttribute(hConsole, fmt);
         pos.X = 0;
         pos.Y = 26;
         SetConsoleCursorPosition(hConsole, pos);
