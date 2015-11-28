@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1448712765 source:c:\users\Андрей\documents\_repos\kp52op\courses\prog_base\self\sr3\sr3\main.c
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
+	<string.h>
+
