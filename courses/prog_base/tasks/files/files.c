@@ -29,7 +29,6 @@ void fprocess(const char * pread, const char * pwrite){
     size = strlen(str);
 	sp = strtok(str, " ");
 	while (sp) {
-		fprintf(fp2, "%s\n", sp);
 		sp = strtok(NULL, " ");
 		countspaces++;
 	}
