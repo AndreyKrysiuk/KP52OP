@@ -23,7 +23,7 @@ void fprocess(const char * pread, const char * pwrite){
     }
 
     for(count = 1; count < 7; count++){
-    fgets(str, 10000, fp1);
+    fgets(str, 999, fp1);
     }
 
     size = strlen(str);
