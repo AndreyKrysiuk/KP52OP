@@ -36,5 +36,8 @@ void fprocess(const char * pread, const char * pwrite){
 
     wordsize = size - countspaces;
     fprintf(fp2, "%i", wordsize);
+
+    fclose(fp1);
+    fclose(fp2);
 }
 
