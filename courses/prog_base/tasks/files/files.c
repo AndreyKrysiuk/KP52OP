@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 void fprocess(const char * pread, const char * pwrite){
     FILE * fp1;
     FILE * fp2;
     int count;
     int size;
-    int wordsize;
-    int countspaces = 0;
+    int countsymbols = 0;
+    int i;
     char str[999];
     char * sp;
 
@@ -25,16 +26,19 @@ void fprocess(const char * pread, const char * pwrite){
     for(count = 1; count < 7; count++){
     fgets(str, 999, fp1);
     }
-
     size = strlen(str);
 	sp = strtok(str, " ");
-	while (sp) {
-		sp = strtok(NULL, " ");
-		countspaces++;
+	while(sp){
+        sp = strtok(NULL, " ");
+	}
+	for(i = 0; i < size; i++){
+        if(isalnum(str[i])!=0){
+            countsymbols++;
+        }
 	}
 
-    wordsize = size - countspaces;
-    fprintf(fp2, "%i", wordsize);
+
+    fprintf(fp2, "%i", countsymbols);
 
     fclose(fp1);
     fclose(fp2);
