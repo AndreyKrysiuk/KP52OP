@@ -1,0 +1,18 @@
+# depslib dependency file v1.0
+1448706311 source:d:\lab3\main.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<conio.h>
+	<windows.h>
+	"main.h"
+	<float.h>
+
+1448706555 source:d:\lab3\functions.c
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	<windows.h>
+
+1448658345 d:\lab3\main.h
+
