@@ -27,6 +27,8 @@ int main(){
     }
 
     free(lastxDec);
+    free(i);
+    free(count);
     free(p);
     return 0;
 }
