@@ -9,24 +9,22 @@
 typedef struct post_s* post_t;
 typedef struct network_s* network_t;
 
+
 network_t network_create();
-network_t network_getPostsWithRepostsMoreThanArg(network_t self, int amountRepost);
+network_t network_getPostsWithRepostsMoreThanValue(network_t self, int value);
 
-int network_getAmountReposts(network_t self, int index);
+void network_remove();
+void network_addNewPostToEnd(network_t self, int amountReposts, const char* text);
+void network_addNewPostByIndex(network_t self, int amountReposts, const char* text, int index);
+void network_setNewAmountRepostsForPost(network_t self, int index, int new_amountReposts);
+void network_setNewTextForPost(network_t self, int index, const char * new_text);
+void network_printPost(network_t self, int index);
+void network_printNetwork(network_t self);
+void network_removePostByIndex(network_t self, int index);
+
 int network_getAmountPosts(network_t self);
-int network_getMaxRepost(network_t self);
-
-void network_deletePost(network_t self, int index);
-void network_addPost(network_t self, char * text, int amountReposts);
-void network_addPostByIndex(network_t self, int index, char* text, int amountReposts);
-void network_printPost(network_t self);
-void network_remove(network_t self);
-void network_setNumOfRepost(network_t self, int index, int amountReposts);
-
-char* network_getPostByIndex(network_t self, int index);
-
-
-
+int network_getAmountRepostsOfPost(network_t self, int index);
+int network_getPostWithMaxAmountReposts(network_t self);
 
 
 #endif // MODULE_H_INCLUDED
