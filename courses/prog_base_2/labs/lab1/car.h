@@ -9,12 +9,12 @@
 #include <time.h>
 #include <string.h>
 
+typedef struct car_s* car_t;
+
 #include "core.h"
 #include "posts.h"
 
-typedef struct car_s* car_t;
-
-car_t car_new();
+car_t car_new(int speed);
 
 char * car_getNumber(car_t car);
 

@@ -1,16 +1,16 @@
 #ifndef POSTS_H_INCLUDED
 #define POSTS_H_INCLUDED
 
-#include "core.h"
-#include "car.h"
+
 
 typedef enum{VIOLATOR, OK} VIOLATOR_STATUS;
-typedef enum{STATUS_OK, STATUS_ERROR} ERROR_CODE;
+typedef enum errors{STATUS_OK = 0, STATUS_ERROR} ERROR_CODE;
 
 typedef struct posts_s* posts_t;
 typedef struct post_s* post_t;
-typedef struct core_s* core_t;
-typedef struct car_s* car_t;
+
+#include "core.h"
+#include "car.h"
 
 posts_t posts_new();
 
