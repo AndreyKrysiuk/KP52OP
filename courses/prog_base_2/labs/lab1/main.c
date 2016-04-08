@@ -102,7 +102,7 @@ static void core_addNewViolator__oneHundredAndOneViolator_error(void **state){
     for(int i = 0; i < 101; i++){
         core_addNewViolator(core, posts, 0, car);
     }
-    assert_int_equal(core_getAmountViolators(core), 100);
+    assert_int_equal(core_getAmountViolators(core), 99);
     assert_int_equal(core_getErrorStatus(core), 1);
     posts_remove(posts);
     core_remove(core);
