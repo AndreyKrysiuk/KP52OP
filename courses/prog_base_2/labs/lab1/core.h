@@ -9,6 +9,7 @@ typedef struct violator_s * violator_t;
 typedef struct posts_s * posts_t;
 
 core_t core_new();
+
 void core_addNewViolator(core_t core, posts_t posts, int postIndex, car_t car);
 void core_printViolatorsList(core_t core);
 void core_remove(core_t core);
