@@ -9,19 +9,10 @@
 #include <time.h>
 #include <string.h>
 
-<<<<<<< HEAD
 typedef struct car_s* car_t;
 
 #include "core.h"
 #include "posts.h"
-
-
-=======
-#include "core.h"
-#include "posts.h"
-
-typedef struct car_s* car_t;
->>>>>>> 3bcd7c215158b6612b1e77901692b9b6bbf312a6
 
 car_t car_new(int speed);
 

@@ -37,7 +37,6 @@ static void core_new__void__ZeroCountViolators(void ** state){
     core_remove(core);
 }
 
-<<<<<<< HEAD
 static void core_new__fiveCarsOnTwoPosts__countViolatorsThree(void ** state){
     core_t core = core_new();
     car_t car[5];
@@ -97,56 +96,33 @@ static void posts_addNewPost__fiftyOnePost_error(void **state){
 
 static void core_addNewViolator__oneHundredAndOneViolator_error(void **state){
     core_t core = core_new();
+    car_t car = car_new(150);
     posts_t posts = posts_new();
     posts_addNewPost(posts, 120);
-    car_t car = car_new(150);
     for(int i = 0; i < 101; i++){
         core_addNewViolator(core, posts, 0, car);
     }
-    assert_int_equal(core_getAmountViolators(core), 99);
     assert_int_equal(core_getErrorStatus(core), 1);
+    assert_int_equal(core_getAmountViolators(core), 100);
+    car_remove(car);
     posts_remove(posts);
     core_remove(core);
-    car_remove(car);
 }
-=======
->>>>>>> 3bcd7c215158b6612b1e77901692b9b6bbf312a6
 
 
 
 int main(){
-    {
+
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(posts_new__void__ZeroCountPosts),
         cmocka_unit_test(posts_addNewPost__tenNewPosts__CountPostsTen),
         cmocka_unit_test(core_new__void__ZeroCountViolators),
-<<<<<<< HEAD
         cmocka_unit_test(core_new__fiveCarsOnTwoPosts__countViolatorsThree),
         cmocka_unit_test(car_new__invalidSpeed__NULL),
         cmocka_unit_test(posts_checkViolator__oneCarOnOnePost__countViolatorsOne),
         cmocka_unit_test(posts_addNewPost__fiftyOnePost_error),
-        cmocka_unit_test(core_addNewViolator__oneHundredAndOneViolator_error),
-=======
->>>>>>> 3bcd7c215158b6612b1e77901692b9b6bbf312a6
-        /*cmocka_unit_test(),
-        cmocka_unit_test(),
-        cmocka_unit_test(),
-        cmocka_unit_test(),
-        cmocka_unit_test(),
-<<<<<<< HEAD
-=======
-        cmocka_unit_test(),
-        cmocka_unit_test(),
-        cmocka_unit_test(),
-        cmocka_unit_test(),
-        cmocka_unit_test(),
->>>>>>> 3bcd7c215158b6612b1e77901692b9b6bbf312a6
-        cmocka_unit_test()*/
+        cmocka_unit_test(core_addNewViolator__oneHundredAndOneViolator_error)
    };
+
     return cmocka_run_group_tests(tests, NULL, NULL);
 }
-}
-<<<<<<< HEAD
-
-=======
->>>>>>> 3bcd7c215158b6612b1e77901692b9b6bbf312a6

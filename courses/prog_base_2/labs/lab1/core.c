@@ -24,7 +24,6 @@ core_t core_new(){
 }
 
 void core_addNewViolator(core_t core, posts_t posts, int postIndex, car_t car){
-<<<<<<< HEAD
     if(core->amountViolators < MAX_AMOUNT_VIOLATORS){
         if(postIndex >= 0 && postIndex < posts_getAmountPosts(posts)){
             core->violators[core->amountViolators] = malloc(sizeof(struct violator_s));
@@ -41,21 +40,6 @@ void core_addNewViolator(core_t core, posts_t posts, int postIndex, car_t car){
 }
 
 
-=======
-    if(postIndex >= 0 && postIndex < posts_getAmountPosts(posts)){
-        core->violators[core->amountViolators] = malloc(sizeof(struct violator_s));
-        core->violators[core->amountViolators]->postNumber = malloc(sizeof(char)*LENGTH_POST_NUMBER);
-        core->violators[core->amountViolators]->violatorCarNumber = malloc(sizeof(char)*CAR_NUMBER);
-        core->violators[core->amountViolators]->speedViolator = car_getSpeed(car);
-        core->violators[core->amountViolators]->maxAllowSpeedOnPost = posts_getPostMaxSpeed(posts, postIndex);
-        core->violators[core->amountViolators]->postNumber = posts_getPostNumber(posts, postIndex);
-        core->violators[core->amountViolators]->violatorCarNumber = car_getNumber(car);
-        core->amountViolators++;
-        core->error_status = STATUS_OK;
-    } else core->error_status = STATUS_ERROR;
-}
-
->>>>>>> 3bcd7c215158b6612b1e77901692b9b6bbf312a6
 void core_printViolatorsList(core_t core){
     for(int i = 0; i < core->amountViolators; i++){
         printf("Violator - %s speed = %d (> max = %d) on post number %s\n", core->violators[i]->violatorCarNumber, core->violators[i]->speedViolator, core->violators[i]->maxAllowSpeedOnPost, core->violators[i]->postNumber);
