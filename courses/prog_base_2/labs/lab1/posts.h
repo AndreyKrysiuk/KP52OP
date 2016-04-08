@@ -6,13 +6,13 @@
 typedef enum{VIOLATOR, OK} VIOLATOR_STATUS;
 typedef enum errors{STATUS_OK, STATUS_ERROR} ERROR_CODE;
 
+typedef struct posts_s* posts_t;
+typedef struct post_s* post_t;
+
 #include "core.h"
 #include "car.h"
 
-typedef struct posts_s* posts_t;
-typedef struct post_s* post_t;
-typedef struct core_s* core_t;
-typedef struct car_s* car_t;
+
 
 posts_t posts_new();
 

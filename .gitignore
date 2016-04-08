@@ -43,3 +43,7 @@ Temporary Items
 .apdisk
 courses/prog_base/tasks/hello_world/hello.c
 courses/prog_base/tasks/hello_world/hello.exe
+*.depend
+*.o
+*.layout
+*.exe

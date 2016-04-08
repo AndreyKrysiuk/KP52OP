@@ -1,12 +1,12 @@
 #ifndef CORE_H_INCLUDED
 #define CORE_H_INCLUDED
 
+typedef struct core_s * core_t;
+typedef struct violator_s * violator_t;
+
 #include "posts.h"
 #include "car.h"
 
-typedef struct core_s * core_t;
-typedef struct violator_s * violator_t;
-typedef struct posts_s * posts_t;
 
 core_t core_new();
 
