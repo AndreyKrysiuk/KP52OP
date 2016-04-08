@@ -5,7 +5,7 @@
 #include "car.h"
 
 typedef enum{VIOLATOR, OK} VIOLATOR_STATUS;
-typedef enum{STATUS_OK, STATUS_ERROR} ERROR_CODE;
+typedef enum errors{STATUS_OK, STATUS_ERROR} ERROR_CODE;
 
 typedef struct posts_s* posts_t;
 typedef struct post_s* post_t;
@@ -28,3 +28,4 @@ ERROR_CODE posts_getErrorCode(posts_t self);
 VIOLATOR_STATUS posts_checkViolator(posts_t self, int postIndex, car_t car, core_t core);
 
 #endif // POSTS_H_INCLUDED
+
