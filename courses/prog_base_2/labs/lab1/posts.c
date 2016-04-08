@@ -10,14 +10,14 @@ struct post_s{
 
 struct posts_s{
     int amountPosts;
-    ERROR_CODE error;
+    ERROR_CODE error_status;
     post_t posts[MAX_AMOUNT_POST];
 };
 
 posts_t posts_new(){
     posts_t posts = (posts_t)malloc(sizeof(struct posts_s));
     posts->amountPosts = 0;
-    posts->error = STATUS_OK;
+    posts->error_status = STATUS_OK;
     return posts;
 }
 
@@ -39,8 +39,9 @@ void posts_addNewPost(posts_t self, int maxAllowSpeed){
             strcpy(self->posts[self->amountPosts]->postNumber, postNumber);
             self->posts[self->amountPosts]->maxAllowSpeed = maxAllowSpeed;
             self->amountPosts++;
-        } else self->error = STATUS_ERROR;
-    } else self->error = STATUS_ERROR;
+            self->error_status = STATUS_OK;
+        } else self->error_status = STATUS_ERROR;
+    } else self->error_status = STATUS_ERROR;
 }
 
 void posts_printInfoAboutPosts(posts_t self){
@@ -50,30 +51,30 @@ void posts_printInfoAboutPosts(posts_t self){
 }
 
 VIOLATOR_STATUS posts_checkViolator(posts_t self, int postIndex, car_t car, core_t core){
-    if(postIndex > 0 && postIndex < self->amountPosts){
+    if(postIndex >= 0 && postIndex < self->amountPosts){
         if(car_getSpeed(car) > self->posts[postIndex]->maxAllowSpeed){
             core_addNewViolator(core, self, postIndex, car);
-            self->error = STATUS_OK;
+            self->error_status = STATUS_OK;
             return VIOLATOR;
         } else {
-            self->error = STATUS_OK;
+            self->error_status = STATUS_OK;
             return OK;
         }
-    } else self->error = STATUS_ERROR;
+    } else self->error_status = STATUS_ERROR;
 }
 
 char * posts_getPostNumber(posts_t self, int postIndex){
-    if(postIndex > 0 && postIndex < self->amountPosts){
-        self->error = STATUS_OK;
+    if(postIndex >= 0 && postIndex < self->amountPosts){
+        self->error_status = STATUS_OK;
         return self->posts[postIndex]->postNumber;
-    } else self->error = STATUS_ERROR;
+    } else self->error_status = STATUS_ERROR;
 }
 
 int posts_getPostMaxSpeed(posts_t self, int postIndex){
     if(postIndex >= 0 && postIndex < self->amountPosts){
-        self->error = STATUS_OK;
+        self->error_status = STATUS_OK;
         return self->posts[postIndex]->maxAllowSpeed;
-    } else self->error = STATUS_ERROR;
+    } else self->error_status = STATUS_ERROR;
 }
 
 void posts_remove(posts_t self){
@@ -88,5 +89,5 @@ int posts_getAmountPosts(posts_t self){
 }
 
 ERROR_CODE posts_getErrorCode(posts_t self){
-    return self->error;
+    return self->error_status;
 }
