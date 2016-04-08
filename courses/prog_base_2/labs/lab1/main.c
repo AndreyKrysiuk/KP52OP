@@ -109,10 +109,7 @@ static void core_addNewViolator__oneHundredAndOneViolator_error(void **state){
     core_remove(core);
 }
 
-
-
 int main(){
-
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(core_new__fiveCarsOnTwoPosts__countViolatorsThree),
         cmocka_unit_test(car_new__invalidSpeed__NULL),
@@ -121,7 +118,9 @@ int main(){
         cmocka_unit_test(core_addNewViolator__oneHundredAndOneViolator_error),
         cmocka_unit_test(posts_new__void__ZeroCountPosts),
         cmocka_unit_test(posts_addNewPost__tenNewPosts__CountPostsTen),
-        cmocka_unit_test(core_new__void__ZeroCountViolators)
+        cmocka_unit_test(core_new__void__ZeroCountViolators),
    };
+
+
     return cmocka_run_group_tests(tests, NULL, NULL);
 }
