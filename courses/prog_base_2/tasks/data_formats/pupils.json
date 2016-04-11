@@ -1,0 +1,52 @@
+[
+    {
+        "name" : "Rick",
+        "surname" : "Grimes",
+        "birthdate" : "1992-03-09",
+        "form" : {
+            "nameForm" : "11-A",
+            "numberInList" : 34
+        },
+        "score" : 7.5
+    },
+    {
+        "name" : "Carl",
+        "surname" : "Grimes",
+        "birthdate" : "1998-12-01",
+        "form" : {
+            "nameForm" : "11-B",
+            "numberInList" : 23
+        },
+        "score" : 12.0
+    },
+    {
+        "name" : "Daryl",
+        "surname" : "Dyxon",
+        "birthdate" : "1987-06-06",
+        "form" : {
+            "nameForm" : "11-C",
+            "numberInList" : 19
+        },
+        "score" : 11.2
+    },
+    {
+        "name" : "Glenn",
+        "surname" : "Rhee",
+        "birthdate" : "1995-11-05",
+        "form" : {
+            "nameForm" : "10-C",
+            "numberInList" : 25
+        },
+        "score" : 9.8
+    },
+    {
+        "name" : "Maggie",
+        "surname" : "Greene",
+        "birthdate" : "1993-01-12",
+        "form" : {
+            "nameForm" : "10-A",
+            "numberInList" : 20
+        },
+        "score" : 10.1
+    }
+]
