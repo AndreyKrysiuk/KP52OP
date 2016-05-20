@@ -1,0 +1,50 @@
+# depslib dependency file v1.0
+1463228481 source:d:\op\op_lab3_callbacks\calbacks.c
+	"callbacks.h"
+
+1463231278 source:d:\op\op_lab3_callbacks\main.c
+	<stdio.h>
+	<stdlib.h>
+	"user.h"
+	"callbacks.h"
+	"events.h"
+	"helper.h"
+
+1463553208 source:d:\op\op_lab3_callbacks\user.c
+	"user.h"
+
+1463211013 d:\op\op_lab3_callbacks\user.h
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+
+1463227967 d:\op\op_lab3_callbacks\callbacks.h
+	<stdio.h>
+	"user.h"
+
+1463227707 source:d:\op\op_lab3_callbacks\event.c
+	"events.h"
+
+1463723176 d:\op\op_lab3_callbacks\events.h
+	"user.h"
+
+1463552460 source:d:\op\op_lab3_callbacks\helper.c
+	"helper.h"
+
+1463553200 d:\op\op_lab3_callbacks\helper.h
+	"events.h"
+
+1463231254 source:d:\op\op_lab3_callbacks\unit_tests.c
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	<stddef.h>
+	<setjmp.h>
+	<cmocka.h>
+	"user.h"
+	"callbacks.h"
+	"events.h"
+	"helper.h"
+
+1426175038 c:\program files (x86)\cmocka\include\cmocka.h
+
