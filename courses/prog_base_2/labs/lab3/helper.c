@@ -30,20 +30,33 @@ static void helper_message(event_t event, user_t reciver){
 }
 
 void helper_reminder(helper_t helper){
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD pos;
     int count = 0;
     int numEvents = 0;
     while(numEvents < helper->numEvents){
+        pos.X = 0;
+        pos.Y = 0;
+        SetConsoleCursorPosition(hConsole, pos);
+        printf("Time : %5i", count);
         for(int i = 0; i < helper->numEvents; i++){
             if(count == event_getTimeRemaindering(helper->events[i])){
+                pos.X = 0;
+                pos.Y = 2;
+                SetConsoleCursorPosition(hConsole, pos);
                 helper_message(helper->events[i], event_getCreator(helper->events[i]));
                 if(event_getNumFollowers(helper->events[i]) != 0){
                     for(int k = 0; k < event_getNumFollowers(helper->events[i]); k++){
                         helper_message(helper->events[i], event_getFollower(helper->events[i], k));
                     }
                 }
+                Sleep(3000);
                 numEvents++;
             }
         }
+
+        Sleep(1000);
+        system("cls");
         count++;
     }
 }

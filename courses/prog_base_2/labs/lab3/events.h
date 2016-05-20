@@ -17,10 +17,12 @@ char * event_getFollowerName(event_t event, int index);
 user_t event_getCreator(event_t event);
 user_t event_getFollower(event_t event, int index);
 
-STATUS event_addFollower(event_t event, user_t follower);
+void event_addFollower(event_t event, user_t follower);
 int event_getTimeRemaindering(event_t event);
 int event_getNumFollowers(event_t event);
 
 void event_printFollowers(event_t event);
 void event_printDescriptions(event_t event);
+
+STATUS event_getStatus(event_t event);
 #endif // EVENTS_H_INCLUDED

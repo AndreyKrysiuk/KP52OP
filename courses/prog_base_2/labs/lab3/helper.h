@@ -2,6 +2,7 @@
 #define HELPER_H_INCLUDED
 
 #include "events.h"
+#include <windows.h>
 
 typedef struct helper_s * helper_t;
 
