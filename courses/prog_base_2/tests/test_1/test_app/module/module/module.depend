@@ -1,0 +1,30 @@
+# depslib dependency file v1.0
+1446671346 source:c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\tests\test_1\test_app\module\module\main.c
+
+1463293074 source:c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\tests\test_1\test_app\module\module\list.c
+	<stdlib.h>
+	"list.h"
+
+1463293074 c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\tests\test_1\test_app\module\module\list.h
+	<stdlib.h>
+
+1463829261 source:c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\tests\test_1\test_app\module\module\turniket.c
+	"turniket.h"
+
+1463829414 c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\tests\test_1\test_app\module\module\turniket.h
+	<stdlib.h>
+	"list.h"
+	"worker.h"
+	"event.h"
+
+1463827792 source:c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\tests\test_1\test_app\module\module\worker.c
+	"worker.h"
+
+1463826694 c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\tests\test_1\test_app\module\module\worker.h
+
+1463823361 source:c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\tests\test_1\test_app\module\module\event.c
+	"event.h"
+
+1463823535 c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\tests\test_1\test_app\module\module\event.h
+	"worker.h"
+
