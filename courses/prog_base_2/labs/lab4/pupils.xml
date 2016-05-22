@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pupils>
+    <pupil>
+        <id>0</id>
+        <name>Rick</name>
+        <surname>Grimes</surname>
+        <birthdate>1992-03-09</birthdate>
+        <form nameForm="11-A">
+            <numberInList>34</numberInList>
+        </form>
+        <score>7.5</score>
+    </pupil>
+    <pupil>
+        <id>1</id>
+        <name>Carl</name>
+        <surname>Grimes</surname>
+        <birthdate>1998-12-01</birthdate>
+        <form nameForm="11-B">
+            <numberInList>23</numberInList>
+        </form>
+        <score>12.0</score>
+    </pupil>
+    <pupil>
+        <id>2</id>
+        <name>Daryl</name>
+        <surname>Dixon</surname>
+        <birthdate>1987-06-06</birthdate>
+        <form nameForm="11-C">
+            <numberInList>19</numberInList>
+        </form>
+        <score>11.2</score>
+    </pupil>
+    <pupil>
+        <id>3</id>
+        <name>Glenn</name>
+        <surname>Rhee</surname>
+        <birthdate>1995-11-05</birthdate>
+        <form nameForm="10-C">
+            <numberInList>25</numberInList>
+        </form>
+        <score>9.8</score>
+    </pupil>
+    <pupil>
+        <id>4</id>
+        <name>Maggie</name>
+        <surname>Greene</surname>
+        <birthdate>1993-01-12</birthdate>
+        <form nameForm="10-A">
+            <numberInList>20</numberInList>
+        </form>
+        <score>10.1</score>
+    </pupil>
+</pupils>
