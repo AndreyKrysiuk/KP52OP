@@ -366,8 +366,8 @@ void http_request_chooseMethod(http_request_t req, socket_t * clientSocket, pupi
                                         stScore, stNumberInList, stNameForm);
                         socket_write_string(clientSocket, pupils_PupilToXMLMessage(pupils, stId));
                         pupils_printNodeXML(stId, stName, stSurname, stBirthdate,
-                                        stScore, stNumberInList, stNameForm);
-                        //socket_write_string(clientSocket, result);
+                                        stScore, stNumberInList, stNameForm, result);
+                        socket_write_string(clientSocket, result);
                     }
                 }
             else sendErrorMessageXML("NOL ALLOWED", clientSocket);

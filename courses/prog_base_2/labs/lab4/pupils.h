@@ -32,5 +32,5 @@ void pupils_newPupil(pupils_t self, int id, const char * name, const char * surn
                        double score, int numberInList, const char * nameForm);
 
 void pupils_printNodeXML(int id, const char * name, const char * surname, const char * birthdate,
-                       double score, int numberInList, const char * nameForm);
+                       double score, int numberInList, const char * nameForm, char * buffer);
 #endif // PUPILS_H_INCLUDED

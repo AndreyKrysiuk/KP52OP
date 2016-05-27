@@ -247,26 +247,18 @@ int pupils_checkID(pupils_t self, int id){
 char * pupils_AlltoXMLMessage(pupils_t self){
     char message[MSG_LENGTH] = "\0";
     char buff[MSG_LENGTH];
+    char tmpbuff[MSG_LENGTH];
     strcat(message, "<pupils>\n");
     for(int i = 0; i < self->amountPupils; i++){
-        sprintf(buff, "\t<pupil>\n"
-               "\t\t<id>%i</id>\n"
-               "\t\t<name>%s</name>\n"
-               "\t\t<surname>%s</surname>\n"
-               "\t\t<birthdate>%s</birthdate>\n"
-               "\t\t<form nameForm=\"%s\">\n"
-               "\t\t\t<numberInList>%i</numberInList>\n"
-               "\t\t</form>\n"
-               "\t\t<score>%.2f</score>\n"
-               "\t</pupil>\n",
-               self->pupils[i]->id,
-               self->pupils[i]->name,
-               self->pupils[i]->surname,
-               self->pupils[i]->birthdate,
-               self->pupils[i]->form.nameForm,
-               self->pupils[i]->form.numberInList,
-               self->pupils[i]->score
-               );
+        pupils_printNodeXML( self->pupils[i]->id,
+                               self->pupils[i]->name,
+                               self->pupils[i]->surname,
+                               self->pupils[i]->birthdate,
+                               self->pupils[i]->score,
+                               self->pupils[i]->form.numberInList,
+                               self->pupils[i]->form.nameForm,
+                               tmpbuff);
+        sprintf(buff, "%s", tmpbuff);
         strcat(message, buff);
     }
     strcat(message, "</pupils>\n");
@@ -275,26 +267,18 @@ char * pupils_AlltoXMLMessage(pupils_t self){
 
 char * pupils_PupilToXMLMessage(pupils_t self, int id){
      char message[MSG_LENGTH];
+     char tmpbuff[MSG_LENGTH];
      for(int i = 0; i < self->amountPupils; i++){
         if(self->pupils[i]->id == id){
-            sprintf(message, "<pupil>\n"
-                    "\t<id>%i</id>\n"
-                    "\t<name>%s</name>\n"
-                    "\t<surname>%s</surname>\n"
-                    "\t<birthdate>%s</birthdate>\n"
-                    "\t<form nameForm=\"%s\">\n"
-                    "\t\t<numberInList>%i</numberInList>\n"
-                    "\t</form>\n"
-                    "\t<score>%.2f</score>\n"
-                    "</pupil>\n\n",
-                   self->pupils[i]->id,
-                   self->pupils[i]->name,
-                   self->pupils[i]->surname,
-                   self->pupils[i]->birthdate,
-                   self->pupils[i]->form.nameForm,
-                   self->pupils[i]->form.numberInList,
-                   self->pupils[i]->score
-                   );
+               pupils_printNodeXML( self->pupils[i]->id,
+                               self->pupils[i]->name,
+                               self->pupils[i]->surname,
+                               self->pupils[i]->birthdate,
+                               self->pupils[i]->score,
+                               self->pupils[i]->form.numberInList,
+                               self->pupils[i]->form.nameForm,
+                               tmpbuff);
+                sprintf(message, "%s", tmpbuff);
             return message;
         }
     }
@@ -303,28 +287,34 @@ char * pupils_PupilToXMLMessage(pupils_t self, int id){
 
 
 void pupils_printNodeXML(int id, const char * name, const char * surname, const char * birthdate,
-                       double score, int numberInList, const char * nameForm){
+                       double score, int numberInList, const char * nameForm, char * buffer){
 
-    xmlDoc * doc = NULL;
+  	xmlDoc * doc = NULL;
 	xmlNode * rootNode = NULL;
 	xmlNode * studentNode = NULL;
 	xmlNode * groupNode = NULL;
 	char strBuf[100];
-    studentNode = xmlNewChild(rootNode, NULL, "pupil", NULL);
-    sprintf(strBuf, "%i", id);
-    xmlNewChild(studentNode, NULL, "id", strBuf);
+
+	doc = xmlNewDoc("1.0");
+	rootNode = xmlNewNode(NULL, "pupils");
+	xmlDocSetRootElement(doc, rootNode);
+
+	studentNode = xmlNewChild(rootNode, NULL, "pupil", NULL);
+	sprintf(strBuf, "%i", id);
 	xmlNewChild(studentNode, NULL, "name", name);
 	xmlNewChild(studentNode, NULL, "surname", surname);
 	xmlNewChild(studentNode, NULL, "birthdate", birthdate);
-
 	groupNode = xmlNewChild(studentNode, NULL, "form", NULL);
 	xmlNewProp(groupNode, "nameForm", nameForm);
-	xmlNewChild(groupNode, NULL, "numberInList", numberInList);
-	sprintf(strBuf, "%f", score);
-	xmlNewChild(studentNode, NULL, "score", strBuf);
-
+	sprintf(strBuf, "%d", numberInList);
+	xmlNewChild(groupNode, NULL, "numberInList", strBuf);
+	sprintf(strBuf, "%.2f", score);
+    xmlNewChild(studentNode, NULL, "score", strBuf);
 	xmlBuffer * bufferPtr = xmlBufferCreate();
 	xmlNodeDump(bufferPtr, NULL, (xmlNode *)doc, 0, 1);
-	printf("%s", (const char *)bufferPtr->content);
+	strcpy(buffer, strstr((char *)bufferPtr->content, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+1);
 	xmlBufferFree(bufferPtr);
+
+    xmlFreeDoc(doc);
+	xmlCleanupParser();
 }
