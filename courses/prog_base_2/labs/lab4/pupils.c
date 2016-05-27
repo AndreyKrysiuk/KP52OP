@@ -300,3 +300,31 @@ char * pupils_PupilToXMLMessage(pupils_t self, int id){
     }
     return 0;
 }
+
+
+void pupils_printNodeXML(int id, const char * name, const char * surname, const char * birthdate,
+                       double score, int numberInList, const char * nameForm){
+
+    xmlDoc * doc = NULL;
+	xmlNode * rootNode = NULL;
+	xmlNode * studentNode = NULL;
+	xmlNode * groupNode = NULL;
+	char strBuf[100];
+    studentNode = xmlNewChild(rootNode, NULL, "pupil", NULL);
+    sprintf(strBuf, "%i", id);
+    xmlNewChild(studentNode, NULL, "id", strBuf);
+	xmlNewChild(studentNode, NULL, "name", name);
+	xmlNewChild(studentNode, NULL, "surname", surname);
+	xmlNewChild(studentNode, NULL, "birthdate", birthdate);
+
+	groupNode = xmlNewChild(studentNode, NULL, "form", NULL);
+	xmlNewProp(groupNode, "nameForm", nameForm);
+	xmlNewChild(groupNode, NULL, "numberInList", numberInList);
+	sprintf(strBuf, "%f", score);
+	xmlNewChild(studentNode, NULL, "score", strBuf);
+
+	xmlBuffer * bufferPtr = xmlBufferCreate();
+	xmlNodeDump(bufferPtr, NULL, (xmlNode *)doc, 0, 1);
+	printf("%s", (const char *)bufferPtr->content);
+	xmlBufferFree(bufferPtr);
+}

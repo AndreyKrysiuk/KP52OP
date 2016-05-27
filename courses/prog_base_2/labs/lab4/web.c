@@ -365,27 +365,9 @@ void http_request_chooseMethod(http_request_t req, socket_t * clientSocket, pupi
                         pupils_newPupil(pupils, stId, stName, stSurname, stBirthdate,
                                         stScore, stNumberInList, stNameForm);
                         socket_write_string(clientSocket, pupils_PupilToXMLMessage(pupils, stId));
-                        char res[MSG_LENGTH];
-                        sprintf(res,"<pupil>\n"
-                                    "\t<id>%i</id>\n"
-                                    "\t<name>%s</name>\n"
-                                    "\t<surname>%s</surname>\n"
-                                    "\t<birthdate>%s</birthdate>\n"
-                                    "\t<form nameForm=\"%s\">\n"
-                                    "\t\t<numberInList>%i</numberInList>\n"
-                                    "\t</form>\n"
-                                    "\t<score>%.2f</score>\n"
-                                    "</pupil>\n\n",
-                                    stId, stName, stSurname,
-                                    stBirthdate, stNameForm, stNumberInList, stScore);
-                        sprintf(result,
-                                    "HTTP/1.1 200 OK\n"
-                                    "Content-length: %zu\n"
-                                    "Content-type: application/xml\n"
-                                    "\n"
-                                    "%s\0",
-                                    strlen(res), res);
-                        socket_write_string(clientSocket, result);
+                        pupils_printNodeXML(stId, stName, stSurname, stBirthdate,
+                                        stScore, stNumberInList, stNameForm);
+                        //socket_write_string(clientSocket, result);
                     }
                 }
             else sendErrorMessageXML("NOL ALLOWED", clientSocket);

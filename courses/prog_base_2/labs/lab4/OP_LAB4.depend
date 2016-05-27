@@ -175,7 +175,7 @@
 
 1460150472 c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\labs\lab4\socket.h
 
-1463902805 c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\labs\lab4\pupils.h
+1464002930 c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\labs\lab4\pupils.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -183,13 +183,13 @@
 	<libxml/tree.h>
 	"web.h"
 
-1463902263 source:c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\labs\lab4\pupils.c
+1464002930 source:c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\labs\lab4\pupils.c
 	"pupils.h"
 
 1460150472 source:c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\labs\lab4\socket_win.c
 	<winsock2.h>
 	"socket.h"
 
-1463906912 source:c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\labs\lab4\web.c
+1464003377 source:c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\labs\lab4\web.c
 	"web.h"
 
