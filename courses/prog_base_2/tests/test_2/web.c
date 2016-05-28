@@ -200,14 +200,11 @@ void http_request_chooseMethod(http_request_t req, socket_t * clientSocket, pupi
                      int len = fread(text, sizeof(char), sizeof(text)/sizeof(char), finput);
                      text[len] = '\0';
                      fclose(finput);
-                     socket_write_string(clientSocket, text);
+                    char buff[100000];
+                     list_t * list = web_textToList(text);
 
-}
-
+                     socket_write_string(clientSocket, web_listToHTML(list));
                 }
-
-                socket_write_string(clientSocket, filename);
-
          }
     }
     else sendErrorMessageXML(404, "NOT FOUND", clientSocket);
@@ -234,5 +231,39 @@ void web_printInfoNodeXML(char * buffer){
 
     xmlFreeDoc(doc);
 	xmlCleanupParser();
+}
+
+list_t * web_textToList(char * text){
+    list_t * list = list_new();
+    char * word = strtok(text, "\" ,;:)([]");
+    list_push_back(list, word);
+    while(word != NULL){
+        word = strtok(NULL, "\" ,;:)([]");
+        if(word != NULL){
+            list_push_back(list, word);
+        }
+    }
+    return list;
+}
+
+char * web_listToHTML(list_t * list){
+    char buff[1000000];
+    strcat(buff, "<!DOCTYPE html>\n"
+                    "<html>\n"
+                    "<head>\n"
+                    "<meta charset=\"UTF-8\"\n>"
+                    "<title>Sample</title>\n"
+                    "</head>\n"
+                    "<body>\n"
+                    "<ul>\n");
+    for(int i = 0; i < list_getSize(list); i++){
+       strcat(buff, "<li>");
+       strcat(buff, list_get(list, i));
+       strcat(buff, "</li>\n");
+    }
+    strcat(buff, "</ui>\n"
+                    "</body>\n"
+                    "</html>\n");
+    return buff;
 }
 

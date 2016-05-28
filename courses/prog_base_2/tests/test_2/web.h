@@ -32,6 +32,9 @@ keyvalue_toString(keyvalue_t * self);
 
 void web_printInfoNodeXML();
 
+
+list_t * web_textToList(char * text);
+char * web_listToHTML(list_t * list);
 void http_request_startServer(pupils_all_t pupils);
 void http_request_chooseMethod(http_request_t req, socket_t * clientSocket, pupils_all_t pupils);
 
