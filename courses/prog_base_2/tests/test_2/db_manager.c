@@ -30,6 +30,7 @@ struct db_s {
 
 pupils_all_t pupils_all_new(){
     pupils_all_t pupils_all = malloc(sizeof(struct pupils_all_s));
+    pupils_all->numPupils = 0;
     pupils_all->pupils = list_new();
     return pupils_all;
 }
@@ -84,8 +85,7 @@ int db_countPupils(db_t self) {
 void db_getAllPupils(db_t self, pupils_all_t pupils){
     sqlite3_stmt * stmt = NULL;
     const char * sqlQuery = "SELECT * FROM PUPILS";
-    int count = 0;
-    int rc = sqlite3_prepare_v2(self->db, sqlQuery, strlen(sqlQuery), &stmt, 0);
+    sqlite3_prepare_v2(self->db, sqlQuery, strlen(sqlQuery), &stmt, 0);
     while (1) {
         int rc = sqlite3_step(stmt);
         if (SQLITE_ERROR == rc) {
@@ -98,7 +98,6 @@ void db_getAllPupils(db_t self, pupils_all_t pupils){
             _fillPupil(stmt, newPupil);
             list_push_back(pupils->pupils, newPupil);
             pupils->numPupils++;
-            count++;
         }
     }
     sqlite3_finalize(stmt);
@@ -106,7 +105,7 @@ void db_getAllPupils(db_t self, pupils_all_t pupils){
 
 
 
-void web_printPupilNodeXML(pupils_t * pupils, char * buffer){
+void web_printPupilNodeXML(int id, char * name, char * surname, char * birthdate, int form, double score, char * buffer){
 
   	xmlDoc * doc = NULL;
 	xmlNode * rootNode = NULL;
@@ -119,14 +118,14 @@ void web_printPupilNodeXML(pupils_t * pupils, char * buffer){
 	xmlDocSetRootElement(doc, rootNode);
 
 	studentNode = xmlNewChild(rootNode, NULL, "pupil", NULL);
-	sprintf(strBuf, "%i", pupils->id);
+	sprintf(strBuf, "%i", id);
 	xmlNewChild(studentNode, NULL, "id", strBuf);
-	xmlNewChild(studentNode, NULL, "name", pupils->name);
-	xmlNewChild(studentNode, NULL, "surname", pupils->surname);
-	xmlNewChild(studentNode, NULL, "birthdate", pupils->birthDate);
-	sprintf(strBuf, "%d", pupils->form);
+	xmlNewChild(studentNode, NULL, "name", name);
+	xmlNewChild(studentNode, NULL, "surname", surname);
+	xmlNewChild(studentNode, NULL, "birthdate", birthdate);
+	sprintf(strBuf, "%d", form);
 	xmlNewChild(studentNode, NULL, "form", strBuf);
-	sprintf(strBuf, "%.2f", pupils->score);
+	sprintf(strBuf, "%.2f", score);
     xmlNewChild(studentNode, NULL, "score", strBuf);
 	xmlBuffer * bufferPtr = xmlBufferCreate();
 	xmlNodeDump(bufferPtr, NULL, (xmlNode *)doc, 0, 1);
@@ -137,19 +136,20 @@ void web_printPupilNodeXML(pupils_t * pupils, char * buffer){
 	xmlCleanupParser();
 }
 
+
 char * pupils_all_msgAll(pupils_all_t self){
-
-     char result[100000];
-        char buff[10000];
-        strcat(result, "<pupils>\n");
-        for(int i = 0; i < self->numPupils; i++ ){
-            web_printPupilNodeXML(list_get(self->pupils, i), buff);
-            printf("%s", buff);
-            sprintf(result, "%s\n", buff);
-        }
-        strcat(result, "</pupils>\n");
-        return result;
-
+    char message[100000] = "\0";
+    char buff[100000];
+    char * tmpbuff = malloc(sizeof(char)*10000);
+    strcat(message, "<pupils>\n");
+    for(int i = 0; i < self->numPupils; i++){
+        pupils_t * pupil = (pupils_t *)list_get(self->pupils, i);
+        web_printPupilNodeXML(pupil->id, pupil->name, pupil->surname, pupil->birthDate, pupil->form, pupil->score, tmpbuff);
+        sprintf(buff, "%s", tmpbuff);
+        strcat(message, buff);
+    }
+    strcat(message, "</pupils>\n");
+    return message;
 }
 
 

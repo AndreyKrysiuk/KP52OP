@@ -12,6 +12,11 @@ struct http_request_s{
     int formLength;
 };
 
+size_t write_to_string(void *ptr, size_t size, size_t count, void *stream) {
+	strcpy((char*)stream, (char*)ptr);
+	return size*count;
+}
+
 static void sendErrorMessageXML(int code, char * text, socket_t * clientSocket){
      char result_msg[MSG_LENGTH];
     sprintf(result_msg,
@@ -148,13 +153,66 @@ void http_request_chooseMethod(http_request_t req, socket_t * clientSocket, pupi
                         "\n"
                         "%s\0",
                         strlen(pupils_all_msgAll(pupils)), pupils_all_msgAll(pupils));
-                        printf("%s\n", pupils_all_msgAll(pupils));
                 socket_write_string(clientSocket, result);
         }
 
+    } else if(strcmp(req.uri, "/external") == 0){
+         if(strcmp(req.method, "GET") == 0){
+                	/*CURL *curl;
+                    CURLcode res;
+
+                    curl_global_init(CURL_GLOBAL_ALL);
+
+                    curl = curl_easy_init();
+                    char resString[5000];
+
+                    char* resuestFields = "result=4";
+
+                    curl_easy_setopt(curl, CURLOPT_URL, "http://pb-homework.appspot.com/test/var/26?format=xml2");
+                    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, resuestFields);
+                    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_string);
+                    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &resString);
+
+                    res = curl_easy_perform(curl);
+
+                    if (res != CURLE_OK)
+                        fprintf(stderr, "curl_easy_perform() failed: %s\n",
+                        curl_easy_strerror(res));
+
+                    puts(resString);
+                    curl_easy_cleanup(curl);
+
+                    curl_global_cleanup();*/
+         }
+    } else if(strcmp(req.uri, "/files/") > 0){
+         if(strcmp(req.method, "GET") == 0){
+                char * name = strstr(req.uri, "s/");
+                char * filename = malloc(sizeof(char)*1000);
+                for(int i = 0; i < strlen(name); i++){
+                    filename[i] = name[i+2];
+                }
+                strcat(filename, ".txt");
+                if(file_exists(filename) == 0){
+                    sendErrorMessageXML(404, "File not found", clientSocket);
+                } else {
+                     char text [1000000];
+                     FILE* finput = fopen(filename, "r");
+                     int len = fread(text, sizeof(char), sizeof(text)/sizeof(char), finput);
+                     text[len] = '\0';
+                     fclose(finput);
+                     socket_write_string(clientSocket, text);
+
+}
+
+                }
+
+                socket_write_string(clientSocket, filename);
+
+         }
     }
     else sendErrorMessageXML(404, "NOT FOUND", clientSocket);
 }
+
 
 
 void web_printInfoNodeXML(char * buffer){

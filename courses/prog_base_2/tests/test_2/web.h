@@ -6,11 +6,13 @@
 #include <stddef.h>
 #include <string.h>
 
+
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
 #include "socket.h"
 #include "db_manager.h"
+//#include "curl.h"
 
 #define BUFFER_LENGTH 100000
 #define MSG_LENGTH 10000

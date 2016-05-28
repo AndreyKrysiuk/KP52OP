@@ -13,7 +13,7 @@ db_t db_new(const char * dbFile);
 void db_free(db_t self);
 
 void db_getAllPupils(db_t self, pupils_all_t pupils);
-void web_printPupilNodeXML(pupils_t * pupils, char * buffer);
+void web_printPupilNodeXML(int id, char * name, char * surname, char * birthdate, int form, double score, char * buffer);
 
 int db_countPupils(db_t self);
 int pupils_all_getNum(pupils_all_t self);
