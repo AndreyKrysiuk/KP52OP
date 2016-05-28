@@ -70,17 +70,17 @@ static int checkInputData_HTMLresponse(socket_t * clientSocket, char * result, c
 
 static int checkInputData_XMLresponse(socket_t * clientSocket, char * result, char * stName, char * stSurname, char* stBirthdate, char * stNameForm, int stNumberInList, double stScore){
     if(strlen(stName) == 0 || strlen(stName) > WORD_LENGTH)
-        sendErrorMessageHTML("Incorrect name", clientSocket);
+        sendErrorMessageXML("Incorrect name", clientSocket);
     else if(strlen(stSurname) == 0 || strlen(stSurname) > WORD_LENGTH)
-        sendErrorMessageHTML("Incorrect Surname", clientSocket);
+        sendErrorMessageXML("Incorrect Surname", clientSocket);
     else if(strlen(stBirthdate) == 0 || strlen(stBirthdate) > WORD_LENGTH)
-        sendErrorMessageHTML("Incorrect Date", clientSocket);
+        sendErrorMessageXML("Incorrect Date", clientSocket);
     else if(strlen(stNameForm) == 0 || strlen(stNameForm) > WORD_LENGTH)
-        sendErrorMessageHTML("Incorrect Form", clientSocket);
+        sendErrorMessageXML("Incorrect Form", clientSocket);
     else if(stScore < 0 || stScore > 12.0)
-        sendErrorMessageHTML("Incorrect Score", clientSocket);
+        sendErrorMessageXML("Incorrect Score", clientSocket);
     else if(stNumberInList < 0 || stNumberInList > 50)
-        sendErrorMessageHTML("Incorrect Number", clientSocket);
+        sendErrorMessageXML("Incorrect Number", clientSocket);
     else return 0;
     return 1;
 }
