@@ -1,0 +1,45 @@
+# depslib dependency file v1.0
+1463894726 source:d:\nlp\list.c
+	<stdlib.h>
+	"list.h"
+
+1463894726 d:\nlp\list.h
+	<stdlib.h>
+
+1464554501 source:d:\nlp\main.c
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	"nlp.h"
+
+1464554501 source:d:\nlp\nlp.c
+	"nlp.h"
+
+1464554552 d:\nlp\nlp.h
+	<stdio.h>
+	<string.h>
+	<ctype.h>
+	"list.h"
+
+1463894726 source:c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\tasks\nlp\nlp\list.c
+	<stdlib.h>
+	"list.h"
+
+1463894726 c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\tasks\nlp\nlp\list.h
+	<stdlib.h>
+
+1464554501 source:c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\tasks\nlp\nlp\main.c
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	"nlp.h"
+
+1464554972 c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\tasks\nlp\nlp\nlp.h
+	<stdio.h>
+	<string.h>
+	<ctype.h>
+	"list.h"
+
+1464554957 source:c:\users\Андрей\documents\_repos\kp52op\kp52op\courses\prog_base_2\tasks\nlp\nlp\nlp.c
+	"nlp.h"
+
