@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QAudioInput>
+#include <QAudioOutput>
 #include <QByteArray>
 #include <QComboBox>
 #include <QMainWindow>
@@ -11,6 +12,16 @@
 #include <QPushButton>
 #include <QSlider>
 #include <QWidget>
+
+#include "voiceanalyzer.h"
+#include "voicegenerator.h"
+
+const int DataFrequencyHzOutput = 44100;
+const int DataFrequencyHzInput = 48000;
+
+#define MAX_INPUT_VALUE 50
+#define MIN_INPUT_VALUE -50
+
 
 class AudioInfo : public QIODevice
 {
@@ -75,18 +86,31 @@ private:
 private slots:
     void refreshDisplay();
     void refreshDisplay2();
+    void targetFrequencyChanged(qreal targetFrequency);
     void readMore();
     void sliderChanged(int value);
 
 private:
     // Owned by layout
+    void initAudioInput();
+    void initAudioOutput();
+
+
+    VoiceGenerator *m_generator;
+    VoiceAnalyzer *m_analyzer;
+
+
     RenderArea *m_canvas;
     QSlider *m_volumeSlider;
     QLineEdit * m_display;
+    QLineEdit * m_frequency;
 
     QAudioDeviceInfo m_device;
     AudioInfo *m_audioInfo;
     QAudioFormat m_format;
+    QAudioFormat m_format_output;
+    QAudioFormat m_format_input;
+    QAudioOutput *m_audioOutput;
     QAudioInput *m_audioInput;
     QIODevice *m_input;
     bool m_pullMode;

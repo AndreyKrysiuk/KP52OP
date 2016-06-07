@@ -12,11 +12,6 @@
 #include <QAudioInput>
 #include <qendian.h>
 
-#define PUSH_MODE_LABEL "Enable push mode"
-#define PULL_MODE_LABEL "Enable pull mode"
-#define SUSPEND_LABEL   "Suspend recording"
-#define RESUME_LABEL    "Resume recording"
-
 const int BufferSize = 4096;
 
 GuitarTuner::GuitarTuner(QWidget *parent) :
@@ -30,9 +25,13 @@ GuitarTuner::GuitarTuner(QWidget *parent) :
     m_buffer(BufferSize, 0),
     ui(new Ui::GuitarTuner)
 {
+
+    initAudioOutput();
+    initAudioInput();
     //ui->setupUi(this);
     initializeWindow();
     initializeAudio();
+
 }
 
 GuitarTuner::~GuitarTuner()
@@ -220,6 +219,10 @@ void GuitarTuner::initializeWindow()
     m_display = new QLineEdit;
     layout->addWidget(m_display);
 
+    m_frequency = new QLineEdit;
+    layout->addWidget(m_display);
+
+
     m_volumeSlider = new QSlider(Qt::Horizontal, this);
     m_volumeSlider->setRange(0, 100);
     m_volumeSlider->setValue(100);
@@ -288,4 +291,52 @@ void GuitarTuner::sliderChanged(int value)
 {
     if (m_audioInput)
         m_audioInput->setVolume(qreal(value) / 100);
+}
+
+void GuitarTuner::initAudioOutput()
+{
+    m_format_output.setSampleRate(DataFrequencyHzOutput);
+    m_format_output.setCodec("audio/pcm");
+    m_format_output.setSampleSize(16);
+    m_format_output.setChannelCount(1);
+    m_format_output.setByteOrder(QAudioFormat::LittleEndian);
+    m_format_output.setSampleType(QAudioFormat::SignedInt);
+
+
+    QAudioDeviceInfo outputDeviceInfo(QAudioDeviceInfo::defaultOutputDevice());
+    if (!outputDeviceInfo.isFormatSupported(m_format_output))
+            m_format_output = outputDeviceInfo.nearestFormat(m_format_output);
+
+    m_audioOutput = new QAudioOutput(outputDeviceInfo, m_format_output, this);
+    m_generator = new VoiceGenerator(m_format_output, 82.407, 0.5, this);
+}
+
+void GuitarTuner::initAudioInput()
+{
+    m_format_input.setSampleRate(DataFrequencyHzInput);
+    m_format_input.setCodec("audio/pcm");
+    m_format_input.setSampleSize(16);
+    m_format_input.setChannelCount(1);
+    m_format_input.setByteOrder(QAudioFormat::LittleEndian);
+    m_format_input.setSampleType(QAudioFormat::SignedInt);
+
+    QAudioDeviceInfo inputDeviceInfo(QAudioDeviceInfo::defaultInputDevice());
+    if (!inputDeviceInfo.isFormatSupported(m_format_input))
+            m_format_input = inputDeviceInfo.nearestFormat(m_format_input);
+
+    m_audioInput = new QAudioInput(inputDeviceInfo, m_format_input, this);
+    m_analyzer = new VoiceAnalyzer(m_format_input, this);
+    m_analyzer->setCutOffPercentage(0.5);
+
+}
+
+void GuitarTuner::targetFrequencyChanged(qreal targetFrequency)
+{
+    m_audioOutput->stop();
+    m_generator->stop();
+
+    m_generator->setFrequency(targetFrequency);
+
+    m_generator->start();
+    m_audioOutput->start();
 }

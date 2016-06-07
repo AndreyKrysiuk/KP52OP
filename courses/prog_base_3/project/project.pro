@@ -13,8 +13,14 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        guitartuner.cpp
+        guitartuner.cpp \
+    fft.cpp \
+    voiceanalyzer.cpp \
+    voicegenerator.cpp
 
-HEADERS  += guitartuner.h
+HEADERS  += guitartuner.h \
+    fft.h \
+    voiceanalyzer.h \
+    voicegenerator.h
 
 FORMS    += guitartuner.ui
