@@ -16,12 +16,16 @@
 #include "voiceanalyzer.h"
 #include "voicegenerator.h"
 
+
 const int DataFrequencyHzOutput = 44100;
 const int DataFrequencyHzInput = 48000;
 
 #define MAX_INPUT_VALUE 50
 #define MIN_INPUT_VALUE -50
 
+namespace Ui {
+class GuitarTuner;
+}
 
 class AudioInfo : public QIODevice
 {
@@ -35,6 +39,7 @@ public:
     void stop();
 
     qreal level() const { return m_level; }
+    qreal m_freq;
 
     qint64 readData(char *data, qint64 maxlen);
     qint64 writeData(const char *data, qint64 len);
@@ -66,10 +71,6 @@ private:
     QPixmap m_pixmap;
 };
 
-namespace Ui {
-class GuitarTuner;
-}
-
 class GuitarTuner : public QDialog
 {
     Q_OBJECT
@@ -80,12 +81,11 @@ public:
 
 private:
     void initializeWindow();
-    void initializeAudio();
-    void createAudioInput();
 
 private slots:
     void refreshDisplay();
     void refreshDisplay2();
+    void refreshDisplay3();
     void targetFrequencyChanged(qreal targetFrequency);
     void readMore();
     void sliderChanged(int value);
@@ -107,7 +107,6 @@ private:
 
     QAudioDeviceInfo m_device;
     AudioInfo *m_audioInfo;
-    QAudioFormat m_format;
     QAudioFormat m_format_output;
     QAudioFormat m_format_input;
     QAudioOutput *m_audioOutput;

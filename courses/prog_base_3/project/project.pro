@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += multimedia core gui
+QT       += svg multimedia core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -23,4 +23,5 @@ HEADERS  += guitartuner.h \
     voiceanalyzer.h \
     voicegenerator.h
 
-FORMS    += guitartuner.ui
+FORMS    += \
+    guitartuner.ui

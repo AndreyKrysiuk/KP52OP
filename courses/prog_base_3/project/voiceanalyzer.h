@@ -26,6 +26,7 @@ class VoiceAnalyzer : public QIODevice
     Q_OBJECT
 public:
     VoiceAnalyzer(const QAudioFormat &format, QObject * parent = 0);
+
     qint64 writeData(const char *data, qint64 maxlen);
     qint64 readData(char *data, qint64 maxlen);
     void start(qreal frequency);
@@ -34,21 +35,23 @@ public:
     int getMaximumVoiceDifference();
     int getMaximumPrecisionPerNote();
 
+private:
+    qint16 getValueInt16(const uchar * ptr);
+
 public slots:
     void setCutOffPercentage(qreal cutoff);
+    void analyzeVoice();
 
 private:
     const QAudioFormat m_format;
     QList<qint16> m_samples;
     int m_totalSampleCount;
     int m_maximumVoiceDifference;
-
-    qint16 getValueInt16(const uchar * ptr);
     int m_stepSize;
     qreal m_frequency;
     qint64 m_position;
     FFT * m_fftHelper;
-    void analyzeVoice();
+
 
 signals:
     void voiceDifference(QVariant frequency);
