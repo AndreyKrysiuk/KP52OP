@@ -20,6 +20,14 @@
 const int DataFrequencyHzOutput = 44100;
 const int DataFrequencyHzInput = 48000;
 
+const qreal FrequencyE = 82.407;
+ const qreal FrequencyA = 110.00;
+ const qreal FrequencyD = 146.83;
+ const qreal FrequencyG = 196.00;
+ const qreal FrequencyB = 246.94;
+ const qreal FrequencyE2 = 329.63;
+
+
 #define MAX_INPUT_VALUE 50
 #define MIN_INPUT_VALUE -50
 
@@ -53,25 +61,7 @@ signals:
     void update();
 };
 
-
-class RenderArea : public QWidget
-{
-    Q_OBJECT
-
-public:
-    RenderArea(QWidget *parent = 0);
-
-    void setLevel(qreal value);
-
-protected:
-    void paintEvent(QPaintEvent *event);
-
-private:
-    qreal m_level;
-    QPixmap m_pixmap;
-};
-
-class GuitarTuner : public QDialog
+class GuitarTuner : public QWidget
 {
     Q_OBJECT
 
@@ -79,47 +69,71 @@ public:
     explicit GuitarTuner(QWidget *parent = 0);
     ~GuitarTuner();
 
-private:
-    void initializeWindow();
+    qreal getVolume() const;
+     bool getMuteState() const;
+     qreal getMicrophoneSensitivity() const;
+     bool isInputModeActive() const;
+     qreal getFrequency() const;
+     int getScaleMaximumValue() const;
+     void setMaximumVoiceDifference(int max);
+     void setMaximumPrecisionPerNote(int max);
 
-private slots:
-    void refreshDisplay();
-    void refreshDisplay2();
-    void refreshDisplay3();
+
+public slots:
+     void toggleSound(bool off);
+     void next();
+     void prev();
+     void changeVolume();
+     void toggleInputOrOutput();
+
+     void lowVoice();
+     void voiceDifference(qreal difference);
+     void correctFrequencyObtained();
+
+
+signals:
+
+public slots:
+    void modeChanged(bool isInput);
+    void muteStateChanged(bool isMuted);
     void targetFrequencyChanged(qreal targetFrequency);
-    void readMore();
-    void sliderChanged(int value);
+    void outputStateChanged(QAudio::State state);
+    void printLevelSound();
 
 private:
-    // Owned by layout
-    void initAudioInput();
-    void initAudioOutput();
+     void initAudioOutput();
+     void initAudioInput();
 
+ signals:
+    // void modeChanged(bool isInput);
+     void volumeChanged(qreal volume);
+     void microphoneSensitivityChanged(qreal sensitivity);
+     void muteChanged(bool isMuted);
+    // void targetFrequencyChanged(qreal targetFrequency);
 
-    VoiceGenerator *m_generator;
-    VoiceAnalyzer *m_analyzer;
+ private:
+     Ui::GuitarTuner *ui;
+     void changeTone(int newIndex);
+     qreal getVolumeFromSoundSlider() const;
+     int m_currentToneIndex;
+     QString m_currentToneString;
+     qreal m_currentToneFrequency;
+     void updateFrequencyByToneIndex(int index);
+     bool m_outputActive;
+     bool m_muted;
+     qreal m_outputVolumeLevel;
+     qreal m_inputVolumeLevel;
+     int m_maximumPrecision;
 
-
-    RenderArea *m_canvas;
-    QSlider *m_volumeSlider;
-    QLineEdit * m_display;
-    QLineEdit * m_frequency;
-
-    QAudioDeviceInfo m_device;
-    AudioInfo *m_audioInfo;
-    QAudioFormat m_format_output;
-    QAudioFormat m_format_input;
-    QAudioOutput *m_audioOutput;
-    QAudioInput *m_audioInput;
-    QIODevice *m_input;
-    bool m_pullMode;
-    QByteArray m_buffer;
-
-private:
-    Ui::GuitarTuner *ui;
+     QAudioDeviceInfo m_device;
+     AudioInfo *m_audioInfo;
+     QAudioInput *m_audioInput;
+     QAudioOutput *m_audioOutput;
+     QAudioFormat m_format_output;
+     QAudioFormat m_format_input;
+     VoiceGenerator *m_voicegenerator;
+     VoiceAnalyzer *m_analyzer;
 };
-
-
 
 
 

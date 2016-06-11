@@ -12,27 +12,65 @@
 #include <QAudioInput>
 #include <qendian.h>
 
-const int BufferSize = 4096;
+const int BufferSize = 4096;  //размер буфера
 
 GuitarTuner::GuitarTuner(QWidget *parent) :
-    QDialog(parent),
-    m_canvas(0),
-    m_device(QAudioDeviceInfo::defaultInputDevice()),
-    m_audioInfo(0),
-    m_audioInput(0),
-    m_input(0),
-    m_pullMode(false),
-    m_buffer(BufferSize, 0),
-    ui(new Ui::GuitarTuner)
+    QWidget(parent),
+    ui(new Ui::GuitarTuner),
+    m_maximumPrecision(0)
 {
-
-
     ui->setupUi(this);
-    initializeWindow();
-    //initializeAudio();
-    initAudioOutput();
-    initAudioInput();
 
+    m_outputActive = false;
+    m_muted = false;
+    m_outputVolumeLevel = getVolumeFromSoundSlider();
+    m_inputVolumeLevel = 1.0 - m_outputVolumeLevel;
+
+    m_currentToneIndex = 5;
+
+
+    updateFrequencyByToneIndex(m_currentToneIndex);
+
+    connect(ui->soundSlider, SIGNAL(valueChanged(int)),
+           SLOT(changeVolume()));
+    connect(ui->soundButton, SIGNAL(toggled(bool)),
+           SLOT(toggleSound(bool)));
+    connect(ui->modeButton, SIGNAL(clicked()),
+           SLOT(toggleInputOrOutput()));
+    connect(ui->buttonNext, SIGNAL(clicked()), SLOT(next()));
+    connect(ui->buttonPrev, SIGNAL(clicked()), SLOT(prev()));
+
+    initAudioInput();
+    initAudioOutput();
+
+    connect(this, SIGNAL(muteStateChanged(bool)),
+                SLOT(muteStateChanged(bool)));
+        connect(this, SIGNAL(volumeChanged(qreal)),
+                m_voicegenerator, SLOT(setAmplitude(qreal)));
+        connect(this, SIGNAL(volumeChanged(qreal)),
+                SLOT(setMaxVolumeLevel(qreal)));
+
+        connect(this, SIGNAL(modeChanged(bool)),
+                SLOT(modeChanged(bool)));
+
+        connect(this, SIGNAL(microphoneSensitivityChanged(qreal)),
+                m_analyzer, SLOT(setCutOffPercentage(qreal)));
+
+        connect(m_analyzer, SIGNAL(lowVoice()),
+                this, SLOT(lowVoice()));
+        connect(m_analyzer, SIGNAL(correctFrequency()),
+                this, SLOT(correctFrequencyObtained()));
+        connect(m_analyzer, SIGNAL(voiceDifference(QVariant)),
+                this, SLOT(voiceDifferenceChanged(QVariant)));
+
+        voiceDifference(m_analyzer->getMaximumVoiceDifference());
+
+        connect(this, SIGNAL(targetFrequencyChanged(qreal)),
+                SLOT(targetFrequencyChanged(qreal)));
+
+        modeChanged(m_outputActive);
+
+    toggleInputOrOutput();
 }
 
 GuitarTuner::~GuitarTuner()
@@ -172,124 +210,34 @@ qint64 AudioInfo::writeData(const char *data, qint64 len)
     return len;
 }
 
-RenderArea::RenderArea(QWidget *parent)
-    : QWidget(parent)
-{
-    setBackgroundRole(QPalette::Base);
-    setAutoFillBackground(true);
-
-    m_level = 0;
-    setMinimumHeight(30);
-    setMinimumWidth(200);
-}
-
-void RenderArea::paintEvent(QPaintEvent * /* event */)
-{
-    QPainter painter(this);
-
-    painter.setPen(Qt::black);
-    painter.drawRect(QRect(painter.viewport().left()+10,
-                           painter.viewport().top()+10,
-                           painter.viewport().right()-20,
-                           painter.viewport().bottom()-20));
-    if (m_level == 150.0)
-        return;
-
-    int pos = ((painter.viewport().right()-20)-(painter.viewport().left()+11))*m_level;
-    painter.fillRect(painter.viewport().left()+11,
-                     painter.viewport().top()+10,
-                     pos,
-                     painter.viewport().height()-21,
-                     Qt::red);
-}
-
-void RenderArea::setLevel(qreal value)
-{
-    m_level = value;
-    update();
-}
-
-void GuitarTuner::initializeWindow()
-{
-    //QScopedPointer<QWidget> window(new QWidget);
-   QVBoxLayout *layout1 = new QVBoxLayout;
-
-    m_canvas = new RenderArea(this);
-    layout1->addWidget(m_canvas);
-
-    m_display = new QLineEdit;
-    layout1->addWidget(m_display);
-
-    m_frequency = new QLineEdit;
-    layout1->addWidget(m_frequency);
-
-
-    m_volumeSlider = new QSlider(Qt::Horizontal, this);
-    m_volumeSlider->setRange(0, 100);
-    m_volumeSlider->setValue(100);
-    connect(m_volumeSlider, SIGNAL(valueChanged(int)), SLOT(sliderChanged(int)));
-    layout1->addWidget(m_volumeSlider);
-
-
-    setLayout(layout1);
-}
-
-void GuitarTuner::readMore()
-{
-    if (!m_audioInput)
-        return;
-    qint64 len = m_audioInput->bytesReady();
-    if (len > BufferSize)
-        len = BufferSize;
-    qint64 l = m_input->read(m_buffer.data(), len);
-    if (l > 0)
-        m_audioInfo->write(m_buffer.constData(), l);
-}
-
-
-void GuitarTuner::refreshDisplay()
-{
-    m_canvas->setLevel(m_audioInfo->level());
-}
-
-void GuitarTuner::refreshDisplay2()
-{
-    m_display->setText(QString::number(20*log10(m_audioInfo->level())));
-}
-
-void GuitarTuner::refreshDisplay3()
-{
-    m_frequency->setText(QString::number(m_audioInfo->m_freq));
-}
-
-void GuitarTuner::sliderChanged(int value)
-{
-    if (m_audioInput)
-        m_audioInput->setVolume(qreal(value) / 100);
-}
-
 void GuitarTuner::initAudioOutput()
-{
-    m_format_output.setSampleRate(DataFrequencyHzOutput);
-    m_format_output.setCodec("audio/pcm");
-    m_format_output.setSampleSize(16);
-    m_format_output.setChannelCount(1);
-    m_format_output.setByteOrder(QAudioFormat::LittleEndian);
-    m_format_output.setSampleType(QAudioFormat::SignedInt);
+ {
+     m_format_output.setSampleRate(DataFrequencyHzOutput);
+     m_format_output.setCodec("audio/pcm");
+     m_format_output.setSampleSize(16);
+     m_format_output.setChannelCount(1);
+     m_format_output.setByteOrder(QAudioFormat::LittleEndian);
+     m_format_output.setSampleType(QAudioFormat::SignedInt);
 
+     QAudioDeviceInfo outputDeviceInfo(
+                 QAudioDeviceInfo::defaultOutputDevice());
+     if (!outputDeviceInfo.isFormatSupported(m_format_output)) {
+         m_format_output = outputDeviceInfo.nearestFormat(m_format_output);
+     }
 
-    QAudioDeviceInfo outputDeviceInfo(QAudioDeviceInfo::defaultOutputDevice());
-    if (!outputDeviceInfo.isFormatSupported(m_format_output))
-            m_format_output = outputDeviceInfo.nearestFormat(m_format_output);
+     m_audioOutput = new QAudioOutput(outputDeviceInfo,
+                                      m_format_output, this);
+     m_voicegenerator = new VoiceGenerator(m_format_output,
+                                           getFrequency(),
+                                           getVolume(),
+                                           this);
 
-    m_audioOutput = new QAudioOutput(outputDeviceInfo, m_format_output, this);
-    m_generator = new VoiceGenerator(m_format_output, 82.407, 0.5, this);
-}
+     connect(m_audioOutput, SIGNAL(stateChanged(QAudio::State)),
+             SLOT(outputStateChanged(QAudio::State)));
+ }
 
 void GuitarTuner::initAudioInput()
 {
-    m_pullMode = true;
-
     m_format_input.setSampleRate(DataFrequencyHzInput);
     m_format_input.setCodec("audio/pcm");
     m_format_input.setSampleSize(16);
@@ -297,32 +245,254 @@ void GuitarTuner::initAudioInput()
     m_format_input.setByteOrder(QAudioFormat::LittleEndian);
     m_format_input.setSampleType(QAudioFormat::SignedInt);
 
-    QAudioDeviceInfo inputDeviceInfo(QAudioDeviceInfo::defaultInputDevice());
-    if (!inputDeviceInfo.isFormatSupported(m_format_input))
-            m_format_input = inputDeviceInfo.nearestFormat(m_format_input);
-
+    QAudioDeviceInfo inputDeviceInfo(
+                QAudioDeviceInfo::defaultInputDevice());
+    if (!inputDeviceInfo.isFormatSupported(m_format_input)) {
+        m_format_input = inputDeviceInfo.nearestFormat(m_format_input);
+    }
     m_audioInfo  = new AudioInfo( m_format_input, this);
-    connect(m_audioInfo, SIGNAL(update()), SLOT(refreshDisplay()));
-    connect(m_audioInfo, SIGNAL(update()), SLOT(refreshDisplay2()));
-
-
-    m_audioInput = new QAudioInput(inputDeviceInfo, m_format_input, this);
-    m_volumeSlider->setValue(m_audioInput->volume() * 100);
-    m_analyzer = new VoiceAnalyzer(m_format_input, this);
-    m_analyzer->setCutOffPercentage(0.5);
     m_audioInfo->start();
-    m_audioInput->start(m_audioInfo);
-    m_audioInfo->m_freq = m_generator->frequency();   //(qreal)m_analyzer->getMaximumVoiceDifference(); +(qreal) m_analyzer->frequency();
-    connect(m_audioInfo, SIGNAL(update()), SLOT(refreshDisplay3()));
+    connect(m_audioInfo, SIGNAL(update()), SLOT(printLevelSound));
+    m_audioInput = new QAudioInput(inputDeviceInfo, m_format_input, this);
+    m_analyzer = new VoiceAnalyzer(m_format_input, this);
+    m_analyzer->setCutOffPercentage(getMicrophoneSensitivity());
 }
+
+qreal GuitarTuner::getVolumeFromSoundSlider() const
+ {
+     qreal value = ui->soundSlider->value();
+     return value/ui->soundSlider->maximum();
+ }
+
+void GuitarTuner::updateFrequencyByToneIndex(int index)
+ {
+
+     switch (index) {
+     case 0: {
+             m_currentToneFrequency = FrequencyE;
+             m_currentToneString = "E";
+             break;
+         }
+     case 1: {
+             m_currentToneFrequency = FrequencyA;
+             m_currentToneString = "A";
+             break;
+         }
+     case 2: {
+             m_currentToneFrequency = FrequencyD;
+             m_currentToneString = "D";
+             break;
+         }
+     case 3: {
+             m_currentToneFrequency = FrequencyG;
+             m_currentToneString = "G";
+             break;
+         }
+     case 4: {
+             m_currentToneFrequency = FrequencyB;
+             m_currentToneString = "B";
+             break;
+         }
+     case 5: {
+             m_currentToneFrequency = FrequencyE2;
+             m_currentToneString = "e";
+             break;
+         }
+     default: {
+             qDebug() << "invalid index!" << index;
+         }
+     }
+     ui->noteLabel->setText(m_currentToneString);
+ }
+
+qreal GuitarTuner::getVolume() const
+ {
+     return m_outputVolumeLevel;
+ }
+
+bool GuitarTuner::getMuteState() const
+ {
+     return m_muted;
+ }
+
+qreal GuitarTuner::getMicrophoneSensitivity() const
+ {
+     return m_inputVolumeLevel;
+ }
+
+bool GuitarTuner::isInputModeActive() const
+{
+    return !m_outputActive;
+}
+
+qreal GuitarTuner::getFrequency() const
+ {
+     return m_currentToneFrequency;
+ }
+
+void GuitarTuner::toggleSound(bool noSound)
+ {
+     if (!m_outputActive) {
+         return;
+     }
+     m_muted = noSound;
+     emit muteChanged(m_muted);
+ }
+
+void GuitarTuner::changeVolume()
+ {
+     qreal resultingAmplitude = getVolumeFromSoundSlider();
+     qDebug() << "resultingAmplitude" << resultingAmplitude;
+     if (m_outputActive) {
+         m_outputVolumeLevel = resultingAmplitude;
+         emit volumeChanged(resultingAmplitude);
+     }
+     else {
+         m_inputVolumeLevel = resultingAmplitude;
+         emit microphoneSensitivityChanged(1.0-resultingAmplitude);
+     }
+ }
+
+void GuitarTuner::toggleInputOrOutput()
+ {
+     if (m_outputActive) {
+         m_outputActive = false;
+         ui->soundSlider->setValue(m_inputVolumeLevel*100);
+         ui->soundButton->setDisabled(true);
+         ui->soundButton->hide();
+         ui->micSensitivityLabel->show();
+         emit modeChanged(true);
+         ui->modeButton->setText("To tone mode");
+     } else {
+         m_outputActive = true;
+         ui->soundSlider->setValue(m_outputVolumeLevel*100);
+         ui->soundButton->setDisabled(false);
+         ui->micSensitivityLabel->hide();
+         ui->soundButton->show();
+         emit modeChanged(false);
+         ui->modeButton->setText("To listen mode");
+     }
+ }
+
+void GuitarTuner::lowVoice()
+{
+    if (ui->noteLabel->font().bold()) {
+        QFont font;
+        font.setBold(false);
+        font.setUnderline(false);
+        ui->noteLabel->setFont(font);
+    }
+}
+
+void GuitarTuner::voiceDifference(qreal difference)
+ {
+     if (ui->noteLabel->font().bold()) {
+         QFont font;
+         font.setBold(false);
+         font.setUnderline(false);
+         ui->noteLabel->setFont(font);
+     }
+     ui->correctSoundSlider->setValue(difference*m_maximumPrecision);
+ }
+
+void GuitarTuner::correctFrequencyObtained()
+{
+    qDebug() << "CORRECT FREQUENCY";
+    QFont font;
+    font.setBold(true);
+    font.setUnderline(true);
+    ui->noteLabel->setFont(font);
+}
+
+void GuitarTuner::setMaximumVoiceDifference(int max)
+ {
+     Q_ASSERT(m_maximumPrecision != 0);
+     ui->correctSoundSlider->setMaximum(max*m_maximumPrecision);
+     ui->correctSoundSlider->setMinimum(-max*m_maximumPrecision);
+     ui->correctSoundSlider->setTickInterval(max*m_maximumPrecision);
+ }
+
+void GuitarTuner::setMaximumPrecisionPerNote(int max)
+ {
+     m_maximumPrecision = max;
+ }
+
+void GuitarTuner::next()
+{
+    changeTone((m_currentToneIndex + 1) % 6);
+}
+
+void GuitarTuner::prev()
+ {
+     changeTone((m_currentToneIndex + 5) % 6);
+ }
+
+void GuitarTuner::changeTone(int newIndex)
+{
+    m_currentToneIndex = newIndex;
+    updateFrequencyByToneIndex(m_currentToneIndex);
+    qDebug() << "targetFrequencyChanged" << m_currentToneFrequency;
+    emit targetFrequencyChanged(m_currentToneFrequency);
+}
+
+void GuitarTuner::outputStateChanged(QAudio::State state)
+{
+    if (QAudio::ActiveState == state && m_muted) {
+        m_audioOutput->suspend();
+    }
+}
+
+void GuitarTuner::muteStateChanged(bool isMuted)
+ {
+     if (isMuted) {
+         m_audioOutput->suspend();
+     }
+     else {
+         m_audioOutput->resume();
+     }
+ }
 
 void GuitarTuner::targetFrequencyChanged(qreal targetFrequency)
 {
-    m_audioOutput->stop();
-    m_generator->stop();
+    if (m_outputActive) {
+        m_audioOutput->stop();
+        m_voicegenerator->stop();
+        m_voicegenerator->setFrequency(targetFrequency);
+        m_voicegenerator->start();
+        m_audioOutput->start(m_voicegenerator);
 
-    m_generator->setFrequency(targetFrequency);
+    }
+    else {
 
-    m_generator->start();
-    m_audioOutput->start();
+        m_audioInput->stop();
+        m_analyzer->stop();
+        m_analyzer->start(targetFrequency);
+        m_audioInput->start(m_analyzer);
+
+    }
+}
+
+void GuitarTuner::modeChanged(bool isInput)
+{
+    if (isInput) {
+        m_audioOutput->stop();
+        m_voicegenerator->stop();
+        m_analyzer->start(getFrequency());
+        m_audioInput->start(m_analyzer);
+
+    }
+    else {
+        m_audioInput->stop();
+        m_analyzer->stop();
+        if (m_voicegenerator->frequency() != getFrequency()) {
+            m_voicegenerator->setFrequency(getFrequency());
+        }
+
+        m_voicegenerator->start();
+        m_audioOutput->start(m_voicegenerator);
+    }
+}
+
+void GuitarTuner::printLevelSound(){
+    ui->level_val->setText(QString::number(20*log10(m_audioInfo->level())));
 }

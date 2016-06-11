@@ -62,8 +62,6 @@ void VoiceGenerator::refreshData()
     Q_ASSERT(m_max_position % (sampleSize) == 0);
     Q_ASSERT(dataGenerationLength <= m_buffer.size());
 
-    //short * t = (short *)m_buffer.data();
-
     uchar * ptr = reinterpret_cast<uchar *>(m_buffer.data());
     int sampleIndex = 0;
     while ( dataGenerationLength > 0){
@@ -98,7 +96,7 @@ void VoiceGenerator::setValue(uchar *ptr, qreal realValue)
         if (m_format.sampleType() == QAudioFormat::UnSignedInt){
             value = static_cast<quint16>(qRound((1.0 + realValue) / 2 * M_MAX_AMPLITUDE_16BIT_UNSIGNED));
         } else if (m_format.sampleType() == QAudioFormat::SignedInt) {
-            value == static_cast<qint16>(qRound(realValue * M_MAX_AMPLITUDE_16BIT_SIGNED));
+            value = static_cast<qint16>(qRound(realValue * M_MAX_AMPLITUDE_16BIT_SIGNED));
         }
 
         if (m_format.byteOrder() == QAudioFormat::LittleEndian)
