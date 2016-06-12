@@ -32,6 +32,7 @@ public:
     void start(qreal frequency);
     void stop();
     qreal frequency();
+    qreal getCurrFrequency();
     int getMaximumVoiceDifference();
     int getMaximumPrecisionPerNote();
 
@@ -51,6 +52,7 @@ private:
     qreal m_frequency;
     qint64 m_position;
     FFT * m_fftHelper;
+    qreal m_currentFrequency;
 
 
 signals:

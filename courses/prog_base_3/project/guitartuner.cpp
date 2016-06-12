@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <math.h>
-#include <QDateTime>
+
 #include <QDebug>
 #include <QPainter>
 #include <QVBoxLayout>
@@ -20,6 +20,12 @@ GuitarTuner::GuitarTuner(QWidget *parent) :
     m_maximumPrecision(0)
 {
     ui->setupUi(this);
+
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(currentFrequency()));
+    //if(m_outputActive = true)
+        connect(timer, SIGNAL(timeout()), this, SLOT(setNoteInChromatic()));
+    timer->start(5);
 
     m_outputActive = false;
     m_muted = false;
@@ -43,32 +49,18 @@ GuitarTuner::GuitarTuner(QWidget *parent) :
     initAudioInput();
     initAudioOutput();
 
-    connect(this, SIGNAL(muteStateChanged(bool)),
-                SLOT(muteStateChanged(bool)));
-        connect(this, SIGNAL(volumeChanged(qreal)),
-                m_voicegenerator, SLOT(setAmplitude(qreal)));
-        connect(this, SIGNAL(volumeChanged(qreal)),
-                SLOT(setMaxVolumeLevel(qreal)));
+    connect(this, SIGNAL(muteStateChanged(bool)), SLOT(muteStateChanged(bool)));
+    connect(this, SIGNAL(volumeChanged(qreal)), m_voicegenerator, SLOT(setAmplitude(qreal)));
+    connect(this, SIGNAL(volumeChanged(qreal)),SLOT(setMaxVolumeLevel(qreal)));
+    connect(this, SIGNAL(modeChanged(bool)), SLOT(modeChanged(bool)));
+    connect(this, SIGNAL(microphoneSensitivityChanged(qreal)),m_analyzer, SLOT(setCutOffPercentage(qreal)));
+    connect(m_analyzer, SIGNAL(lowVoice()),this, SLOT(lowVoice()));
+    connect(m_analyzer, SIGNAL(correctFrequency()), this, SLOT(correctFrequencyObtained()));
+    connect(m_analyzer, SIGNAL(voiceDifference(QVariant)), this, SLOT(voiceDifferenceChanged(QVariant)));
+    voiceDifference(m_analyzer->getMaximumVoiceDifference());
+    connect(this, SIGNAL(targetFrequencyChanged(qreal)), SLOT(targetFrequencyChanged(qreal)));
 
-        connect(this, SIGNAL(modeChanged(bool)),
-                SLOT(modeChanged(bool)));
-
-        connect(this, SIGNAL(microphoneSensitivityChanged(qreal)),
-                m_analyzer, SLOT(setCutOffPercentage(qreal)));
-
-        connect(m_analyzer, SIGNAL(lowVoice()),
-                this, SLOT(lowVoice()));
-        connect(m_analyzer, SIGNAL(correctFrequency()),
-                this, SLOT(correctFrequencyObtained()));
-        connect(m_analyzer, SIGNAL(voiceDifference(QVariant)),
-                this, SLOT(voiceDifferenceChanged(QVariant)));
-
-        voiceDifference(m_analyzer->getMaximumVoiceDifference());
-
-        connect(this, SIGNAL(targetFrequencyChanged(qreal)),
-                SLOT(targetFrequencyChanged(qreal)));
-
-        modeChanged(m_outputActive);
+    modeChanged(m_outputActive);
 
     toggleInputOrOutput();
 }
@@ -250,9 +242,7 @@ void GuitarTuner::initAudioInput()
     if (!inputDeviceInfo.isFormatSupported(m_format_input)) {
         m_format_input = inputDeviceInfo.nearestFormat(m_format_input);
     }
-    m_audioInfo  = new AudioInfo( m_format_input, this);
-    m_audioInfo->start();
-    connect(m_audioInfo, SIGNAL(update()), SLOT(printLevelSound));
+
     m_audioInput = new QAudioInput(inputDeviceInfo, m_format_input, this);
     m_analyzer = new VoiceAnalyzer(m_format_input, this);
     m_analyzer->setCutOffPercentage(getMicrophoneSensitivity());
@@ -269,32 +259,32 @@ void GuitarTuner::updateFrequencyByToneIndex(int index)
 
      switch (index) {
      case 0: {
-             m_currentToneFrequency = FrequencyE;
+             m_currentToneFrequency = stFrequencyE;
              m_currentToneString = "E";
              break;
          }
      case 1: {
-             m_currentToneFrequency = FrequencyA;
+             m_currentToneFrequency = stFrequencyA;
              m_currentToneString = "A";
              break;
          }
      case 2: {
-             m_currentToneFrequency = FrequencyD;
+             m_currentToneFrequency = stFrequencyD;
              m_currentToneString = "D";
              break;
          }
      case 3: {
-             m_currentToneFrequency = FrequencyG;
+             m_currentToneFrequency = stFrequencyG;
              m_currentToneString = "G";
              break;
          }
      case 4: {
-             m_currentToneFrequency = FrequencyB;
+             m_currentToneFrequency = stFrequencyB;
              m_currentToneString = "B";
              break;
          }
      case 5: {
-             m_currentToneFrequency = FrequencyE2;
+             m_currentToneFrequency = stFrequencyE2;
              m_currentToneString = "e";
              break;
          }
@@ -303,6 +293,7 @@ void GuitarTuner::updateFrequencyByToneIndex(int index)
          }
      }
      ui->noteLabel->setText(m_currentToneString);
+     ui->CurrentFrequency_value->setText(QString::number(m_currentToneFrequency));
  }
 
 qreal GuitarTuner::getVolume() const
@@ -371,6 +362,7 @@ void GuitarTuner::toggleInputOrOutput()
          ui->soundButton->show();
          emit modeChanged(false);
          ui->modeButton->setText("To listen mode");
+
      }
  }
 
@@ -419,13 +411,15 @@ void GuitarTuner::setMaximumPrecisionPerNote(int max)
 
 void GuitarTuner::next()
 {
-    changeTone((m_currentToneIndex + 1) % 6);
+    if(m_outputActive)
+        changeTone((m_currentToneIndex + 1) % 6);
 }
 
 void GuitarTuner::prev()
- {
-     changeTone((m_currentToneIndex + 5) % 6);
- }
+{
+    if(m_outputActive)
+       changeTone((m_currentToneIndex + 5) % 6);
+}
 
 void GuitarTuner::changeTone(int newIndex)
 {
@@ -468,7 +462,6 @@ void GuitarTuner::targetFrequencyChanged(qreal targetFrequency)
         m_analyzer->stop();
         m_analyzer->start(targetFrequency);
         m_audioInput->start(m_analyzer);
-
     }
 }
 
@@ -479,7 +472,6 @@ void GuitarTuner::modeChanged(bool isInput)
         m_voicegenerator->stop();
         m_analyzer->start(getFrequency());
         m_audioInput->start(m_analyzer);
-
     }
     else {
         m_audioInput->stop();
@@ -487,12 +479,98 @@ void GuitarTuner::modeChanged(bool isInput)
         if (m_voicegenerator->frequency() != getFrequency()) {
             m_voicegenerator->setFrequency(getFrequency());
         }
-
+        updateFrequencyByToneIndex(0);
+        emit targetFrequencyChanged(m_currentToneFrequency);
         m_voicegenerator->start();
         m_audioOutput->start(m_voicegenerator);
     }
 }
 
+
+void GuitarTuner::currentFrequency()
+{
+        ui->CurrentFrequency_value->setText(QString::number(m_analyzer->getCurrFrequency()));
+}
+
 void GuitarTuner::printLevelSound(){
     ui->level_val->setText(QString::number(20*log10(m_audioInfo->level())));
+}
+
+void GuitarTuner::setNoteInChromatic()
+{
+   qreal currFrequency = m_analyzer->getCurrFrequency();
+   for(int i = 0; i < 6; i++){
+       if(currFrequency < frequencyE * pow(2, i) + (frequencyE - frequencyDmj) * pow(2,i - 1)
+               && currFrequency > frequencyE * pow(2, i) - (frequencyE - frequencyDmj) * pow(2,i - 1)){
+           m_currentToneFrequency = frequencyE * pow(2,i);
+           m_currentToneString = "E";
+           break;
+       } else if(currFrequency < frequencyDmj * pow(2, i) + (frequencyDmj - frequencyD) * pow(2,i - 1)
+                 && currFrequency > frequencyDmj * pow(2, i) - (frequencyDmj - frequencyD) * pow(2,i - 1)){
+           m_currentToneFrequency = frequencyDmj * pow(2,i);
+           m_currentToneString = "D#";
+           break;
+
+       } else if(currFrequency < frequencyD * pow(2, i) + (frequencyD - frequencyCmj) * pow(2, i - 1)
+                 && currFrequency > frequencyD * pow(2, i) - (frequencyD - frequencyCmj) * pow(2, i - 1)){
+           m_currentToneFrequency = frequencyD * pow(2,i);
+           m_currentToneString = "D";
+           break;
+
+       } else if(currFrequency < frequencyCmj * pow(2, i) + (frequencyCmj - frequencyC) * pow(2,i - 1)
+                 && currFrequency > frequencyCmj * pow(2, i) - (frequencyCmj - frequencyC) * pow(2,i - 1)){
+           m_currentToneFrequency = frequencyCmj * pow(2,i);
+           m_currentToneString = "C#";
+
+       } else if(currFrequency < frequencyC * pow(2, i) + (frequencyC - frequencyB) * pow(2,i - 1)
+                 && currFrequency > frequencyC * pow(2, i) - (frequencyC - frequencyB) * pow(2,i - 1)){
+           m_currentToneFrequency = frequencyC * pow(2,i);
+           m_currentToneString = "C";
+           break;
+
+       } else if(currFrequency < frequencyB * pow(2, i) + (frequencyB - frequencyAmj) * pow(2,i - 1)
+                 && currFrequency > frequencyB * pow(2, i) - (frequencyB - frequencyAmj) * pow(2,i - 1)){
+           m_currentToneFrequency = frequencyB * pow(2,i);
+           m_currentToneString = "B";
+           break;
+
+       } else if(currFrequency < frequencyAmj * pow(2, i) + (frequencyAmj - frequencyA) * pow(2,i - 1)
+                && currFrequency > frequencyAmj * pow(2, i) - (frequencyAmj - frequencyA) * pow(2,i - 1)){
+           m_currentToneFrequency = frequencyAmj * pow(2,i);
+           m_currentToneString = "A#";
+           break;
+
+       } else if(currFrequency < frequencyA * pow(2, i) + (frequencyA - frequencyGmj) * pow(2,i - 1)
+                 && currFrequency > frequencyA * pow(2, i) - (frequencyA - frequencyGmj) * pow(2,i - 1)){
+           m_currentToneFrequency = frequencyA * pow(2,i);
+           m_currentToneString = "A";
+           break;
+
+       } else if(currFrequency < frequencyGmj * pow(2, i) + (frequencyGmj - frequencyG) * pow(2,i - 1)
+                 && currFrequency > frequencyGmj * pow(2, i) - (frequencyGmj - frequencyG) * pow(2,i - 1)){
+           m_currentToneFrequency = frequencyGmj  * pow(2,i);
+           m_currentToneString = "G#";
+           break;
+
+       } else if(currFrequency < frequencyG * pow(2, i) + (frequencyG - frequencyFmj) * pow(2,i - 1)
+                 && currFrequency > frequencyG * pow(2, i) - (frequencyG - frequencyFmj) * pow(2,i - 1)){
+           m_currentToneFrequency = frequencyG * pow(2,i);
+           m_currentToneString = "G";
+           break;
+
+       } else if(currFrequency < frequencyFmj * pow(2, i) + (frequencyFmj - frequencyF) * pow(2,i - 1)
+                 && currFrequency > frequencyFmj * pow(2, i) - (frequencyFmj - frequencyF) * pow(2,i - 1)){
+           m_currentToneFrequency = frequencyFmj * pow(2,i);
+           m_currentToneString = "F#";
+           break;
+
+       } else if(currFrequency < frequencyF * pow(2, i) + (frequencyF - frequencyE/2) * pow(2,i - 1)
+                 && currFrequency > frequencyF * pow(2, i) - (frequencyF - frequencyE/2) * pow(2,i - 1)){
+           m_currentToneFrequency = frequencyF * pow(2,i);
+           m_currentToneString = "F";
+           break;
+
+       }
+       ui->noteLabel->setText(m_currentToneString);
+   }
 }

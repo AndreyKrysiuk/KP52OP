@@ -132,6 +132,7 @@ void VoiceAnalyzer::analyzeVoice()
 
     qreal stepSizeInFrequency = (qreal)m_format.sampleRate() / (m_totalSampleCount * m_stepSize);
     qreal newFrequency = (qreal)(index) * stepSizeInFrequency;
+    m_currentFrequency = newFrequency;
 
     int correctIndex = qRound(m_frequency / stepSizeInFrequency);
     qreal value = 0;
@@ -163,3 +164,8 @@ qint64 VoiceAnalyzer::readData(char *data, qint64 maxlen)
 
      return 0;
  }
+
+qreal VoiceAnalyzer::getCurrFrequency()
+{
+    return m_currentFrequency;
+}

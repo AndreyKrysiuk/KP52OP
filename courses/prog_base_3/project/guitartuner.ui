@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>GuitarTunerUI</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="tabulatorIcon">
      <property name="text">
@@ -102,6 +102,24 @@
     </layout>
    </item>
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="CurrentFrequency">
+       <property name="text">
+        <string>Current frequency</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="CurrentFrequency_value">
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QPushButton" name="modeButton">
      <property name="text">
       <string>Change mode</string>
@@ -169,7 +187,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_10">
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
       <widget class="QLabel" name="level">
        <property name="text">
@@ -193,9 +211,8 @@
   <zorder>line</zorder>
   <zorder></zorder>
   <zorder></zorder>
-  <zorder>soundSlider</zorder>
-  <zorder>level_val</zorder>
-  <zorder>level</zorder>
+  <zorder>CurrentFrequency</zorder>
+  <zorder>CurrentFrequency_value</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
