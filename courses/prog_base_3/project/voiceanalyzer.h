@@ -50,10 +50,9 @@ private:
     int m_maximumVoiceDifference;
     int m_stepSize;
     qreal m_frequency;
+    qreal m_currentFrequency;
     qint64 m_position;
     FFT * m_fftHelper;
-    qreal m_currentFrequency;
-
 
 signals:
     void voiceDifference(QVariant frequency);

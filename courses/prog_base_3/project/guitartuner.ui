@@ -19,18 +19,15 @@
      <property name="text">
       <string notr="true"/>
      </property>
-     <property name="pixmap">
-      <pixmap>:/images/guitartab.svg</pixmap>
-     </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QSlider" name="correctSoundSlider">
+    <widget class="QSlider" name="FrequencySlider">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="autoFillBackground">
       <bool>false</bool>
@@ -102,22 +99,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="CurrentFrequency">
-       <property name="text">
-        <string>Current frequency</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="CurrentFrequency_value">
-       <property name="text">
-        <string>0</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <layout class="QHBoxLayout" name="horizontalLayout_3"/>
    </item>
    <item>
     <widget class="QPushButton" name="modeButton">
@@ -137,36 +119,14 @@
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QSlider" name="soundSlider">
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
        <property name="value">
-        <number>65</number>
+        <number>0</number>
        </property>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="soundButton">
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>:d:/PROJECT_OP_FIRST/project/note.svg</normaloff>
-         <normalon>:/images/noteNo.svg</normalon>
-         <activeon>:/images/noteNo.svg</activeon>:d:/PROJECT_OP_FIRST/project/note.svg</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="autoRaise">
-        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -186,33 +146,13 @@
      </item>
     </layout>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
-      <widget class="QLabel" name="level">
-       <property name="text">
-        <string>Level (dB):</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="level_val">
-       <property name="text">
-        <string>0</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
   </layout>
   <zorder>tabulatorIcon</zorder>
-  <zorder>correctSoundSlider</zorder>
+  <zorder>FrequencySlider</zorder>
   <zorder>modeButton</zorder>
   <zorder>line</zorder>
   <zorder></zorder>
   <zorder></zorder>
-  <zorder>CurrentFrequency</zorder>
-  <zorder>CurrentFrequency_value</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
