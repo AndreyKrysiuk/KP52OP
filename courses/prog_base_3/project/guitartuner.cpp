@@ -288,10 +288,8 @@ void GuitarTuner::targetFrequencyChanged(qreal targetFrequency)
         m_voicegenerator->setFrequency(targetFrequency);
         m_voicegenerator->start();
         m_audioOutput->start(m_voicegenerator);
-
     }
     else {
-
         m_audioInput->stop();
         m_analyzer->stop();
         m_analyzer->start(targetFrequency);
@@ -313,32 +311,26 @@ void GuitarTuner::modeChanged(bool isInput)
         if (m_voicegenerator->frequency() != getFrequency()) {
             m_voicegenerator->setFrequency(getFrequency());
         }
-        updateFrequencyByToneIndex(0);
-        emit targetFrequencyChanged(m_currentToneFrequency);
         m_voicegenerator->start();
         m_audioOutput->start(m_voicegenerator);
     }
 }
-
-
 
 void GuitarTuner::setNoteInChromatic()
 {
    qreal maxSliderRange = 0;
    qreal minSliderRange = 0;
    qreal currFrequency = m_analyzer->getCurrFrequency();
-   if(currFrequency > 30){
+   if(currFrequency > 30 && !m_outputActive){
         for(int i = 0; i < 7; i++){
            if(currFrequency < frequencyE * pow(2, i) + (frequencyE - frequencyDmj) * pow(2,i - 1)
                    && currFrequency > frequencyE * pow(2, i) - (frequencyE - frequencyDmj) * pow(2,i - 1)){
-               m_currentToneFrequency = frequencyE * pow(2,i);
                m_currentToneString = "E";
                maxSliderRange = frequencyE * pow(2, i) + (frequencyE - frequencyDmj) * pow(2,i - 1);
                minSliderRange = frequencyE * pow(2, i) - (frequencyE - frequencyDmj) * pow(2,i - 1);
                break;
            } else if(currFrequency < frequencyDmj * pow(2, i) + (frequencyDmj - frequencyD) * pow(2,i - 1)
                      && currFrequency > frequencyDmj * pow(2, i) - (frequencyDmj - frequencyD) * pow(2,i - 1)){
-               m_currentToneFrequency = frequencyDmj * pow(2,i);
                m_currentToneString = "D#";
                maxSliderRange = frequencyDmj * pow(2, i) + (frequencyDmj - frequencyD) * pow(2,i - 1);
                minSliderRange = frequencyDmj * pow(2, i) - (frequencyDmj - frequencyD) * pow(2,i - 1);
@@ -346,7 +338,6 @@ void GuitarTuner::setNoteInChromatic()
 
            } else if(currFrequency < frequencyD * pow(2, i) + (frequencyD - frequencyCmj) * pow(2, i - 1)
                      && currFrequency > frequencyD * pow(2, i) - (frequencyD - frequencyCmj) * pow(2, i - 1)){
-               m_currentToneFrequency = frequencyD * pow(2,i);
                m_currentToneString = "D";
                maxSliderRange = frequencyD * pow(2, i) + (frequencyD - frequencyCmj) * pow(2,i - 1);
                minSliderRange = frequencyD * pow(2, i) - (frequencyD - frequencyCmj) * pow(2,i - 1);
@@ -354,7 +345,6 @@ void GuitarTuner::setNoteInChromatic()
 
            } else if(currFrequency < frequencyCmj * pow(2, i) + (frequencyCmj - frequencyC) * pow(2,i - 1)
                      && currFrequency > frequencyCmj * pow(2, i) - (frequencyCmj - frequencyC) * pow(2,i - 1)){
-               m_currentToneFrequency = frequencyCmj * pow(2,i);
                m_currentToneString = "C#";
                maxSliderRange = frequencyCmj * pow(2, i) + (frequencyCmj - frequencyC) * pow(2,i - 1);
                minSliderRange = frequencyCmj * pow(2, i) - (frequencyCmj - frequencyC) * pow(2,i - 1);
@@ -362,7 +352,6 @@ void GuitarTuner::setNoteInChromatic()
 
            } else if(currFrequency < frequencyC * pow(2, i) + (frequencyC - frequencyB) * pow(2,i - 1)
                      && currFrequency > frequencyC * pow(2, i) - (frequencyC - frequencyB) * pow(2,i - 1)){
-               m_currentToneFrequency = frequencyC * pow(2,i);
                m_currentToneString = "C";
                maxSliderRange = frequencyC * pow(2, i) + (frequencyC - frequencyB) * pow(2,i - 1);
                minSliderRange = frequencyC * pow(2, i) - (frequencyC - frequencyB) * pow(2,i - 1);
@@ -370,7 +359,6 @@ void GuitarTuner::setNoteInChromatic()
 
            } else if(currFrequency < frequencyB * pow(2, i) + (frequencyB - frequencyAmj) * pow(2,i - 1)
                      && currFrequency > frequencyB * pow(2, i) - (frequencyB - frequencyAmj) * pow(2,i - 1)){
-               m_currentToneFrequency = frequencyB * pow(2,i);
                m_currentToneString = "B";
                maxSliderRange = frequencyB * pow(2, i) + (frequencyB - frequencyAmj) * pow(2,i - 1);
                minSliderRange = frequencyB * pow(2, i) - (frequencyB - frequencyAmj) * pow(2,i - 1);
@@ -378,7 +366,6 @@ void GuitarTuner::setNoteInChromatic()
 
            } else if(currFrequency < frequencyAmj * pow(2, i) + (frequencyAmj - frequencyA) * pow(2,i - 1)
                     && currFrequency > frequencyAmj * pow(2, i) - (frequencyAmj - frequencyA) * pow(2,i - 1)){
-               m_currentToneFrequency = frequencyAmj * pow(2,i);
                m_currentToneString = "A#";
                maxSliderRange = frequencyAmj * pow(2, i) + (frequencyAmj - frequencyA) * pow(2,i - 1);
                minSliderRange = frequencyAmj * pow(2, i) - (frequencyAmj - frequencyA) * pow(2,i - 1);
@@ -386,7 +373,6 @@ void GuitarTuner::setNoteInChromatic()
 
            } else if(currFrequency < frequencyA * pow(2, i) + (frequencyA - frequencyGmj) * pow(2,i - 1)
                      && currFrequency > frequencyA * pow(2, i) - (frequencyA - frequencyGmj) * pow(2,i - 1)){
-               m_currentToneFrequency = frequencyA * pow(2,i);
                m_currentToneString = "A";
                maxSliderRange = frequencyA * pow(2, i) + (frequencyA - frequencyGmj) * pow(2,i - 1);
                minSliderRange = frequencyA * pow(2, i) - (frequencyA - frequencyGmj) * pow(2,i - 1);
@@ -394,7 +380,6 @@ void GuitarTuner::setNoteInChromatic()
 
            } else if(currFrequency < frequencyGmj * pow(2, i) + (frequencyGmj - frequencyG) * pow(2,i - 1)
                      && currFrequency > frequencyGmj * pow(2, i) - (frequencyGmj - frequencyG) * pow(2,i - 1)){
-               m_currentToneFrequency = frequencyGmj  * pow(2,i);
                m_currentToneString = "G#";
                maxSliderRange = frequencyGmj * pow(2, i) + (frequencyGmj - frequencyG) * pow(2,i - 1);
                minSliderRange = frequencyGmj * pow(2, i) - (frequencyGmj - frequencyG) * pow(2,i - 1);
@@ -402,7 +387,6 @@ void GuitarTuner::setNoteInChromatic()
 
            } else if(currFrequency < frequencyG * pow(2, i) + (frequencyG - frequencyFmj) * pow(2,i - 1)
                      && currFrequency > frequencyG * pow(2, i) - (frequencyG - frequencyFmj) * pow(2,i - 1)){
-               m_currentToneFrequency = frequencyG * pow(2,i);
                m_currentToneString = "G";
                maxSliderRange = frequencyG * pow(2, i) + (frequencyG - frequencyFmj) * pow(2,i - 1);
                minSliderRange = frequencyG * pow(2, i) - (frequencyG - frequencyFmj) * pow(2,i - 1);
@@ -410,15 +394,13 @@ void GuitarTuner::setNoteInChromatic()
 
            } else if(currFrequency < frequencyFmj * pow(2, i) + (frequencyFmj - frequencyF) * pow(2,i - 1)
                      && currFrequency > frequencyFmj * pow(2, i) - (frequencyFmj - frequencyF) * pow(2,i - 1)){
-               m_currentToneFrequency = frequencyFmj * pow(2,i);
                m_currentToneString = "F#";
                maxSliderRange = frequencyFmj * pow(2, i) + (frequencyFmj - frequencyF) * pow(2,i - 1);
                minSliderRange = frequencyFmj * pow(2, i) - (frequencyFmj - frequencyF) * pow(2,i - 1);
                break;
 
            } else if(currFrequency < frequencyF * pow(2, i) + (frequencyF - frequencyE/2) * pow(2,i - 1)
-                     && currFrequency > frequencyF * pow(2, i) - (frequencyF - frequencyE/2) * pow(2,i - 1)){
-               m_currentToneFrequency = frequencyF * pow(2,i);
+                     && currFrequency > frequencyF * pow(2, i) - (frequencyF - frequencyE/2) * pow(2,i - 1)){          
                m_currentToneString = "F";
                maxSliderRange = frequencyF * pow(2, i) + (frequencyF - frequencyE/2) * pow(2,i - 1);
                minSliderRange = frequencyF * pow(2, i) - (frequencyF - frequencyE/2) * pow(2,i - 1);
@@ -429,5 +411,5 @@ void GuitarTuner::setNoteInChromatic()
    ui->noteLabel->setText(m_currentToneString);
    ui->FrequencySlider->setRange(minSliderRange,  maxSliderRange);
    ui->FrequencySlider->setValue(currFrequency);
-   Sleep(100);
+   Sleep(50);
 }

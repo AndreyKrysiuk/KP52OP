@@ -5,11 +5,9 @@
 #include <QDialog>
 #include <QAudioInput>
 #include <QAudioOutput>
-#include <QByteArray>
 #include <QComboBox>
 #include <QMainWindow>
 #include <QObject>
-#include <QPixmap>
 #include <QPushButton>
 #include <QSlider>
 #include <QWidget>
